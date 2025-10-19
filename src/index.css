@@ -141,4 +141,13 @@ All colors MUST be HSL.
   .transition-theme {
     transition: all 0.3s ease-in-out;
   }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
