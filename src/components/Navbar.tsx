@@ -85,9 +85,11 @@ const Navbar = ({ activeLink }: NavbarProps) => {
               )}
             </Button>
             
-            <Button className="gradient-primary text-white font-semibold px-4 sm:px-6 rounded-full shadow-elegant transition-theme hover:shadow-lg">
-              Login / Sign Up
-            </Button>
+            <Link to="/login">
+              <Button className="gradient-primary text-white font-semibold px-4 sm:px-6 rounded-full shadow-elegant transition-theme hover:shadow-lg">
+                Login / Sign Up
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
