@@ -8,7 +8,7 @@ export const MarketOverview = () => {
   ];
 
   return (
-    <div className="bg-white border-b border-border px-6 py-3">
+    <div className="bg-card border-b border-border px-6 py-3 transition-theme">
       <div className="flex items-center justify-between max-w-7xl">
         <div className="flex items-center gap-8">
           {markets.map((market) => (

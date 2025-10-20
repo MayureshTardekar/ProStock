@@ -57,7 +57,7 @@ export const TradingOptionsGrid = () => {
           return (
             <Card
               key={option.title}
-              className="shadow-sm border-border hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer"
+              className="shadow-sm border-border hover:shadow-elegant transition-all hover:scale-[1.02] cursor-pointer bg-card"
             >
               <CardContent className="p-6 flex items-start gap-4">
                 <div className={`${option.bgColor} p-3 rounded-lg`}>
@@ -74,24 +74,24 @@ export const TradingOptionsGrid = () => {
       </div>
 
       {/* Money Info Bar */}
-      <div className="flex items-center justify-between bg-white border border-border rounded-lg p-4 shadow-sm">
+      <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-lg p-4 shadow-sm transition-theme">
         <div className="flex items-center gap-8">
           <div>
-            <span className="text-sm text-muted-foreground">Money in Dhan: </span>
-            <span className="font-bold">••,••</span>
+            <span className="text-sm text-muted-foreground">Money in ProStock: </span>
+            <span className="font-bold">₹1,24,500.00</span>
           </div>
           <div>
             <span className="text-sm text-muted-foreground">Margin Used: </span>
-            <span className="font-bold">••,••</span>
+            <span className="font-bold">₹50,000.00</span>
           </div>
           <div>
             <span className="text-sm text-muted-foreground">Utilization: </span>
-            <span className="font-bold">••,••</span>
+            <span className="font-bold">40.2%</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-2xl font-bold">₹ 50,000.00</span>
-          <button className="bg-[#22c55e] hover:bg-[#16a34a] text-white px-6 py-2 rounded-md font-medium transition-colors">
+          <button className="gradient-primary text-primary-foreground px-6 py-2 rounded-md font-medium shadow-elegant hover:shadow-lg transition-all">
             + Top Up
           </button>
         </div>

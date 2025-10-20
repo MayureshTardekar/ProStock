@@ -31,7 +31,7 @@ export const TrendingStocks = () => {
   const StockGrid = ({ stocks }: { stocks: typeof trendingData.mostBought }) => (
     <div className="grid grid-cols-4 gap-4">
       {stocks.map((stock) => (
-        <Card key={stock.name} className="shadow-sm border-border hover:shadow-md transition-shadow cursor-pointer">
+        <Card key={stock.name} className="shadow-sm border-border hover:shadow-elegant transition-all hover:scale-[1.02] cursor-pointer bg-card">
           <CardContent className="p-4">
             <p className="font-semibold text-sm mb-2">{stock.name}</p>
             <p className="text-xl font-bold mb-1">{stock.price}</p>
@@ -49,8 +49,8 @@ export const TrendingStocks = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Trending now on Dhan</h2>
-        <button className="text-sm text-[#3b82f6] hover:underline flex items-center gap-1">
+        <h2 className="text-xl font-semibold">Trending now on ProStock</h2>
+        <button className="text-sm text-primary hover:underline flex items-center gap-1">
           more <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -59,19 +59,19 @@ export const TrendingStocks = () => {
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
           <TabsTrigger 
             value="bought" 
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] data-[state=active]:text-[#22c55e] rounded-none"
+            className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none"
           >
             Most Bought
           </TabsTrigger>
           <TabsTrigger 
             value="searched"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] data-[state=active]:text-[#22c55e] rounded-none"
+            className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none"
           >
             Most Searched
           </TabsTrigger>
           <TabsTrigger 
             value="sold"
-            className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] data-[state=active]:text-[#22c55e] rounded-none"
+            className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none"
           >
             Most Sold
           </TabsTrigger>

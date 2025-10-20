@@ -4,6 +4,7 @@ import { PortfolioSummary } from "@/components/dashboard/PortfolioSummary";
 import { TradingOptionsGrid } from "@/components/dashboard/TradingOptionsGrid";
 import { TrendingStocks } from "@/components/dashboard/TrendingStocks";
 import { WatchlistSidebar } from "@/components/dashboard/WatchlistSidebar";
+import { LiveStocks } from "@/components/dashboard/LiveStocks";
 import { Input } from "@/components/ui/input";
 import { Search, Megaphone, X } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +13,7 @@ const Dashboard = () => {
   const [showBanner, setShowBanner] = useState(true);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-background transition-theme">
       <DashboardHeader />
       <MarketOverview />
       
@@ -24,15 +25,15 @@ const Dashboard = () => {
         <main className="flex-1 p-6 space-y-6">
           {/* Notification Banner */}
           {showBanner && (
-            <div className="bg-white border border-border rounded-lg p-4 flex items-start gap-3 shadow-sm">
-              <Megaphone className="w-5 h-5 text-blue-500 mt-0.5" />
+            <div className="bg-card border border-border rounded-lg p-4 flex items-start gap-3 shadow-sm transition-theme">
+              <Megaphone className="w-5 h-5 text-primary mt-0.5" />
               <div className="flex-1">
                 <h4 className="font-semibold text-sm">Muhurat Trading on 21 Oct, 1:45 -2:45 PM</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Trade with ₹0 brokerage on Dhan! Stay prepared, there are important updates for your trades.
+                  Trade with ₹0 brokerage on ProStock! Stay prepared, there are important updates for your trades.
                 </p>
               </div>
-              <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground">
+              <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -43,9 +44,12 @@ const Dashboard = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               placeholder="Search for companies to invest or trade"
-              className="pl-12 h-12 bg-white border-border shadow-sm"
+              className="pl-12 h-12 bg-card border-border shadow-sm"
             />
           </div>
+
+          {/* Live Stocks Section */}
+          <LiveStocks />
 
           {/* Portfolio Summary */}
           <PortfolioSummary />

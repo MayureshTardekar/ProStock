@@ -14,7 +14,7 @@ export const PortfolioSummary = () => {
   ];
 
   return (
-    <Card className="shadow-sm border-border">
+    <Card className="shadow-elegant border-border transition-theme">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">My Portfolio</CardTitle>
@@ -29,19 +29,19 @@ export const PortfolioSummary = () => {
       <CardContent>
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-            <TabsTrigger value="all" className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] rounded-none">
+            <TabsTrigger value="all" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none">
               All
             </TabsTrigger>
-            <TabsTrigger value="stocks" className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] rounded-none">
+            <TabsTrigger value="stocks" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none">
               Stocks
             </TabsTrigger>
-            <TabsTrigger value="mf" className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] rounded-none">
+            <TabsTrigger value="mf" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none">
               Mutual Fund
             </TabsTrigger>
-            <TabsTrigger value="etf" className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] rounded-none">
+            <TabsTrigger value="etf" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none">
               ETFs
             </TabsTrigger>
-            <TabsTrigger value="smallcase" className="data-[state=active]:border-b-2 data-[state=active]:border-[#22c55e] rounded-none">
+            <TabsTrigger value="smallcase" className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none">
               Smallcases
             </TabsTrigger>
           </TabsList>

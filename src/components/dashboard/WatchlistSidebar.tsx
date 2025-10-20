@@ -16,7 +16,7 @@ export const WatchlistSidebar = () => {
   const segments = ["1", "2", "3", "f", "6"];
 
   return (
-    <aside className="w-96 bg-white border-r border-border p-4 space-y-4 h-[calc(100vh-116px)] overflow-y-auto">
+    <aside className="w-96 bg-card border-r border-border p-4 space-y-4 h-[calc(100vh-116px)] overflow-y-auto transition-theme">
       {/* Nifty 50 Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -46,9 +46,9 @@ export const WatchlistSidebar = () => {
         {watchlistStocks.map((stock, index) => (
           <Card
             key={stock.name}
-            className="p-3 hover:shadow-md transition-shadow cursor-pointer border-l-4"
+            className="p-3 hover:shadow-elegant transition-all hover:scale-[1.01] cursor-pointer border-l-4 bg-card"
             style={{
-              borderLeftColor: index === 0 ? '#ef4444' : index === 1 ? '#3b82f6' : index === 2 ? '#f59e0b' : index === 3 ? '#f59e0b' : index === 4 ? '#a855f7' : index === 5 ? '#f59e0b' : '#06b6d4'
+              borderLeftColor: index === 0 ? 'hsl(var(--destructive))' : index === 1 ? 'hsl(217.2, 91.2%, 59.8%)' : index === 2 ? 'hsl(var(--primary))' : index === 3 ? 'hsl(var(--primary))' : index === 4 ? 'hsl(var(--primary))' : index === 5 ? 'hsl(217.2, 91.2%, 59.8%)' : 'hsl(var(--primary))'
             }}
           >
             <div className="flex items-start justify-between mb-2">
