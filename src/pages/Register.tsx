@@ -63,7 +63,7 @@ const Register = () => {
     // TODO: Implement actual registration logic with Lovable Cloud
     setTimeout(() => {
       setIsLoading(false);
-      // navigate("/login"); // Redirect to login after successful registration
+      navigate("/dashboard");
     }, 1000);
   };
 

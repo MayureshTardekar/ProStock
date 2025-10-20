@@ -21,7 +21,7 @@ const Login = () => {
     // TODO: Implement actual authentication logic with Lovable Cloud
     setTimeout(() => {
       setIsLoading(false);
-      // navigate("/"); // Redirect after successful login
+      navigate("/dashboard");
     }, 1000);
   };
 
