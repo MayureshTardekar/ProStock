@@ -2,15 +2,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useTrading } from "@/contexts/TradingContext";
 
 export const PortfolioSummary = () => {
   const [showValues, setShowValues] = useState(true);
+  const { getTotalInvestment, getTotalCurrentValue, getTotalProfitLoss, portfolio } = useTrading();
+
+  const totalInvestment = getTotalInvestment();
+  const currentValue = getTotalCurrentValue();
+  const profitLoss = getTotalProfitLoss();
+  const todayProfit = 0; // Can be calculated based on day's opening prices
 
   const portfolioData = [
-    { label: "Investment", value: "₹5,47,823" },
-    { label: "Current Value", value: "₹6,12,456" },
-    { label: "Overall Profits", value: "₹64,633", isProfit: true },
-    { label: "Today's Profit", value: "₹2,847", isProfit: true },
+    { label: "Investment", value: `₹${totalInvestment.toLocaleString('en-IN', { minimumFractionDigits: 2 })}` },
+    { label: "Current Value", value: `₹${currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}` },
+    { label: "Overall Profits", value: `₹${Math.abs(profitLoss).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, isProfit: profitLoss >= 0 },
+    { label: "Today's Profit", value: `₹${Math.abs(todayProfit).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, isProfit: todayProfit >= 0 },
   ];
 
   return (
@@ -47,18 +54,26 @@ export const PortfolioSummary = () => {
           </TabsList>
           
           <TabsContent value="all" className="mt-6">
-            <div className="grid grid-cols-4 gap-6">
-              {portfolioData.map((item) => (
-                <div key={item.label} className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{item.label}</p>
-                  <p className={`text-2xl font-bold ${
-                    item.isProfit ? "text-[#22c55e]" : ""
-                  }`}>
-                    {showValues ? item.value : "••,••"}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {portfolio.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  Start trading to build your portfolio
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-6">
+                {portfolioData.map((item) => (
+                  <div key={item.label} className="space-y-1">
+                    <p className="text-sm text-muted-foreground">{item.label}</p>
+                    <p className={`text-2xl font-bold ${
+                      item.isProfit ? "text-[#22c55e]" : item.label.includes("Profit") ? "text-red-500" : ""
+                    }`}>
+                      {showValues ? item.value : "••,••"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
           
           {/* Other tab contents would be similar */}

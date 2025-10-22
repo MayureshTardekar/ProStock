@@ -1,44 +1,27 @@
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { MarketOverview } from "@/components/dashboard/MarketOverview";
+import MarketTicker from "@/components/MarketTicker";
 import { PortfolioSummary } from "@/components/dashboard/PortfolioSummary";
 import { TradingOptionsGrid } from "@/components/dashboard/TradingOptionsGrid";
 import { TrendingStocks } from "@/components/dashboard/TrendingStocks";
 import { WatchlistSidebar } from "@/components/dashboard/WatchlistSidebar";
 import { LiveStocks } from "@/components/dashboard/LiveStocks";
 import { Input } from "@/components/ui/input";
-import { Search, Megaphone, X } from "lucide-react";
-import { useState } from "react";
+import { Search } from "lucide-react";
 
 const Dashboard = () => {
-  const [showBanner, setShowBanner] = useState(true);
-
   return (
     <div className="min-h-screen bg-background transition-theme">
       <DashboardHeader />
-      <MarketOverview />
+      <MarketTicker />
       
-      <div className="flex">
-        {/* Left Sidebar - Watchlist */}
-        <WatchlistSidebar />
+      <div className="flex pt-4">
+        {/* Left Sidebar - Watchlist - Sticky */}
+        <div className="sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
+          <WatchlistSidebar />
+        </div>
         
         {/* Main Content */}
         <main className="flex-1 p-6 space-y-6">
-          {/* Notification Banner */}
-          {showBanner && (
-            <div className="bg-card border border-border rounded-lg p-4 flex items-start gap-3 shadow-sm transition-theme">
-              <Megaphone className="w-5 h-5 text-primary mt-0.5" />
-              <div className="flex-1">
-                <h4 className="font-semibold text-sm">Muhurat Trading on 21 Oct, 1:45 -2:45 PM</h4>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Trade with ₹0 brokerage on ProStock! Stay prepared, there are important updates for your trades.
-                </p>
-              </div>
-              <button onClick={() => setShowBanner(false)} className="text-muted-foreground hover:text-foreground transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-
           {/* Search Bar */}
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -59,11 +42,6 @@ const Dashboard = () => {
 
           {/* Trending Stocks */}
           <TrendingStocks />
-
-          {/* Footer */}
-          <footer className="text-center text-sm text-muted-foreground py-6">
-            © 2025 ProStock. All Rights Reserved.
-          </footer>
         </main>
       </div>
     </div>

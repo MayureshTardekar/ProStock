@@ -1,7 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, TrendingUp } from "lucide-react";
+import { Sun, Moon, TrendingUp, User, Bell } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface NavbarProps {
   activeLink?: string;
@@ -9,7 +20,9 @@ interface NavbarProps {
 
 const Navbar = ({ activeLink }: NavbarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
+  const [notifications, setNotifications] = useState<string[]>([]);
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
@@ -71,6 +84,44 @@ const Navbar = ({ activeLink }: NavbarProps) => {
 
           {/* Right side */}
           <div className="flex items-center gap-3 sm:gap-4">
+            {/* Notifications */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full relative transition-theme hover:bg-accent"
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-5 w-5 text-primary" />
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {notifications.length}
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-2">
+                  <h3 className="font-semibold">Notifications</h3>
+                  {notifications.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-4 text-center">
+                      No new notifications
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {notifications.map((notif, index) => (
+                        <div key={index} className="text-sm p-2 bg-muted rounded">
+                          {notif}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Theme Toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -84,12 +135,28 @@ const Navbar = ({ activeLink }: NavbarProps) => {
                 <Moon className="h-5 w-5 text-primary" />
               )}
             </Button>
-            
-            <Link to="/login">
-              <Button className="gradient-primary text-white font-semibold px-4 sm:px-6 rounded-full shadow-elegant transition-theme hover:shadow-lg">
-                Login / Sign Up
-              </Button>
-            </Link>
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full transition-theme hover:bg-accent"
+                  aria-label="Profile menu"
+                >
+                  <User className="h-5 w-5 text-primary" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                  My Profile on ProStock
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/login")}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

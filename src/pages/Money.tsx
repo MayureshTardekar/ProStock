@@ -17,8 +17,17 @@ const Money = () => {
     if (amount <= 0) return;
     
     if (activeTab === "deposit") {
+      const maxBalance = 5000000; // 50 lakhs max
+      if (balance + amount > maxBalance) {
+        alert(`Maximum balance limit is ₹50,00,000. You can add only ₹${(maxBalance - balance).toLocaleString('en-IN')}`);
+        return;
+      }
       addMoney(amount);
     } else {
+      if (amount > balance) {
+        alert('Insufficient balance');
+        return;
+      }
       withdrawMoney(amount);
     }
     
@@ -150,7 +159,10 @@ const Money = () => {
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center">
-                      This is paper trading. No real money is involved.
+                      This is a demo/virtual trading environment. No real money is involved.
+                    </p>
+                    <p className="text-xs text-muted-foreground text-center">
+                      Maximum balance: ₹50,00,000
                     </p>
                   </div>
                 </div>
