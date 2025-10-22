@@ -12,6 +12,8 @@ import Dashboard from "./pages/Dashboard";
 import Portfolio from "./pages/Portfolio";
 import Orders from "./pages/Orders";
 import Money from "./pages/Money";
+import Profile from "./pages/Profile";
+import Markets from "./pages/Markets";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
