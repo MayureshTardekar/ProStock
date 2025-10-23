@@ -38,10 +38,9 @@ export const DashboardHeader = () => {
   };
 
   const navLinks = [
-    { label: "Home", href: "/dashboard", active: true },
+    { label: "Home", href: "/dashboard" },
     { label: "Markets", href: "/markets" },
     { label: "Portfolio", href: "/portfolio" },
-    { label: "Positions", href: "/positions" },
     { label: "Orders", href: "/orders" },
     { label: "Money", href: "/money" },
   ];
@@ -57,22 +56,26 @@ export const DashboardHeader = () => {
 
         {/* Center - Navigation */}
         <nav className="flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={link.href}
-              className={`text-sm font-medium transition-colors relative ${
-                link.active
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {link.label}
-              {link.active && (
-                <span className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = window.location.pathname === link.href || 
+                           (link.href === "/dashboard" && window.location.pathname === "/");
+            return (
+              <Link
+                key={link.label}
+                to={link.href}
+                className={`text-sm font-medium transition-colors relative ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+                {isActive && (
+                  <span className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary" />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right - Status & Profile */}

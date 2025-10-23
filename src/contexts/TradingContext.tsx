@@ -56,7 +56,8 @@ interface TradingContextType {
 
 const TradingContext = createContext<TradingContextType | undefined>(undefined);
 
-const INITIAL_BALANCE = 100000; // ₹1 lakh paper trading money
+const INITIAL_BALANCE = 500000; // ₹5 lakh paper trading money
+const MAX_BALANCE = 5000000; // ₹50 lakh maximum balance limit
 
 export const TradingProvider = ({ children }: { children: ReactNode }) => {
   const [balance, setBalance] = useState(INITIAL_BALANCE);
@@ -272,6 +273,17 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
 
   const addMoney = (amount: number) => {
     const newBalance = balance + amount;
+    
+    // Check max balance limit
+    if (newBalance > MAX_BALANCE) {
+      toast({
+        title: "Maximum Balance Exceeded",
+        description: `Cannot exceed maximum balance of ₹${MAX_BALANCE.toLocaleString('en-IN')}. You can add up to ₹${(MAX_BALANCE - balance).toLocaleString('en-IN')}`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setBalance(newBalance);
     
     const transaction: Transaction = {

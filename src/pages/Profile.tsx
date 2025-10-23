@@ -252,7 +252,7 @@ const Profile = () => {
                     {Object.entries(profile.exchanges).map(([exchange, enabled]) => (
                       <div key={exchange} className="flex items-center gap-2">
                         <Switch
-                          checked={enabled}
+                          checked={Boolean(enabled)}
                           onCheckedChange={(checked) =>
                             setProfile({
                               ...profile,
