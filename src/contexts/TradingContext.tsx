@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface Stock {
   symbol: string;
@@ -64,6 +65,7 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -170,6 +172,12 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
       description: `Successfully bought ${quantity} shares of ${stock.symbol} for ₹${total.toFixed(2)}`,
     });
 
+    // Add notification
+    addNotification(
+      `Bought ${quantity} shares of ${stock.symbol} for ₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+      "BUY"
+    );
+
     return true;
   };
 
@@ -234,6 +242,13 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
       description: `Successfully sold ${quantity} shares of ${symbol} for ₹${total.toFixed(2)}`,
     });
 
+    // Add notification
+    const profitLossText = profitLoss >= 0 ? `+₹${profitLoss.toFixed(2)}` : `-₹${Math.abs(profitLoss).toFixed(2)}`;
+    addNotification(
+      `Sold ${quantity} shares of ${symbol} for ₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (P&L: ${profitLossText})`,
+      "SELL"
+    );
+
     return true;
   };
 
@@ -273,6 +288,12 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
       title: "Funds Added",
       description: `₹${amount.toFixed(2)} has been added to your account`,
     });
+
+    // Add notification
+    addNotification(
+      `Added ₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })} to your account`,
+      "DEPOSIT"
+    );
   };
 
   const withdrawMoney = (amount: number): boolean => {
@@ -302,6 +323,12 @@ export const TradingProvider = ({ children }: { children: ReactNode }) => {
       title: "Funds Withdrawn",
       description: `₹${amount.toFixed(2)} has been withdrawn from your account`,
     });
+
+    // Add notification
+    addNotification(
+      `Withdrew ₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })} from your account`,
+      "WITHDRAW"
+    );
 
     return true;
   };

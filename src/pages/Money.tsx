@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import Footer from "@/components/Footer";
 import { useTrading } from "@/contexts/TradingContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,7 +62,7 @@ const Money = () => {
 
   return (
     <div className="min-h-screen gradient-hero transition-theme">
-      <Navbar />
+      <DashboardHeader />
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Header */}

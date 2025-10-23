@@ -89,7 +89,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground text-center sm:text-left">
             © 2025 ProStock. All Rights Reserved.
           </p>
 

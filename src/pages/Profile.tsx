@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,24 +16,50 @@ const Profile = () => {
     document.documentElement.classList.contains("dark")
   );
   
-  const [profile, setProfile] = useState({
-    fullName: "Mayuresh Patil",
-    gender: "Male",
-    dob: "1998-05-15",
-    pan: "ABCDE1234F",
-    mobile: "+91 9876543210",
-    email: "mayuresh@prostock.com",
-    ckyc: "XXXXXXXXXXXXXX",
-    incomeRange: "₹5L - ₹10L",
-    depository: "CDSL",
-    exchanges: {
-      BSE: true,
-      NSE: true,
-      MCX: false,
-      NCDEX: false,
-      ICEX: false,
-    },
-  });
+  // Load profile from localStorage or use defaults
+  const getInitialProfile = () => {
+    const savedProfile = localStorage.getItem("userProfile");
+    console.log("Loading profile from localStorage:", savedProfile);
+    
+    if (savedProfile) {
+      try {
+        const parsed = JSON.parse(savedProfile);
+        console.log("Parsed profile:", parsed);
+        return parsed;
+      } catch (e) {
+        console.error("Failed to parse saved profile", e);
+      }
+    }
+    
+    console.log("No saved profile, using defaults");
+    return {
+      fullName: "Mayuresh Patil",
+      gender: "Male",
+      dob: "1998-05-15",
+      pan: "ABCDE1234F",
+      mobile: "+91 9876543210",
+      email: "mayuresh@prostock.com",
+      ckyc: "XXXXXXXXXXXXXX",
+      incomeRange: "₹5L - ₹10L",
+      depository: "CDSL",
+      exchanges: {
+        BSE: true,
+        NSE: true,
+        MCX: false,
+        NCDEX: false,
+        ICEX: false,
+      },
+    };
+  };
+  
+  const [profile, setProfile] = useState(getInitialProfile);
+
+  // Sync theme with profile on mount
+  useEffect(() => {
+    const theme = localStorage.getItem("theme");
+    const isDarkMode = theme === "dark" || document.documentElement.classList.contains("dark");
+    setIsDark(isDarkMode);
+  }, []);
 
   const handleThemeToggle = () => {
     const newTheme = !isDark;
@@ -49,11 +75,29 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    localStorage.setItem("userProfile", JSON.stringify(profile));
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been saved successfully.",
-    });
+    try {
+      // Save to localStorage
+      const profileString = JSON.stringify(profile);
+      console.log("Saving profile:", profileString);
+      localStorage.setItem("userProfile", profileString);
+      
+      // Verify it was saved
+      const verified = localStorage.getItem("userProfile");
+      console.log("Verified saved profile:", verified);
+      
+      // Show success toast
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been saved successfully.",
+      });
+    } catch (e) {
+      console.error("Failed to save profile:", e);
+      toast({
+        title: "Error",
+        description: "Failed to save profile. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
