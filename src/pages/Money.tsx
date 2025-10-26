@@ -1,12 +1,18 @@
-import { useState } from "react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import Footer from "@/components/Footer";
-import { useTrading } from "@/contexts/TradingContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MainLayout from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useTrading } from "@/contexts/TradingContext";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
+import { useState } from "react";
 
 const Money = () => {
   const { balance, transactions, addMoney, withdrawMoney } = useTrading();
@@ -15,33 +21,37 @@ const Money = () => {
 
   const handleSubmit = () => {
     if (amount <= 0) return;
-    
+
     if (activeTab === "deposit") {
       const maxBalance = 5000000; // 50 lakhs max
       if (balance + amount > maxBalance) {
-        alert(`Maximum balance limit is ₹50,00,000. You can add only ₹${(maxBalance - balance).toLocaleString('en-IN')}`);
+        alert(
+          `Maximum balance limit is ₹50,00,000. You can add only ₹${(
+            maxBalance - balance
+          ).toLocaleString("en-IN")}`
+        );
         return;
       }
       addMoney(amount);
     } else {
       if (amount > balance) {
-        alert('Insufficient balance');
+        alert("Insufficient balance");
         return;
       }
       withdrawMoney(amount);
     }
-    
+
     setAmount(0);
   };
 
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return date.toLocaleString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -61,9 +71,7 @@ const Money = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-hero transition-theme">
-      <DashboardHeader />
-      
+    <MainLayout>
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Header */}
         <div className="mb-8">
@@ -86,7 +94,10 @@ const Money = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-bold mb-6">
-                  ₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ₹
+                  {balance.toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
 
                 {/* Add/Withdraw Money */}
@@ -118,11 +129,13 @@ const Money = () => {
                       min="0"
                       step="100"
                       value={amount || ""}
-                      onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        setAmount(parseFloat(e.target.value) || 0)
+                      }
                       placeholder="Enter amount"
                       className="bg-background border-border"
                     />
-                    
+
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -152,14 +165,18 @@ const Money = () => {
 
                     <Button
                       onClick={handleSubmit}
-                      disabled={amount <= 0 || (activeTab === "withdraw" && amount > balance)}
+                      disabled={
+                        amount <= 0 ||
+                        (activeTab === "withdraw" && amount > balance)
+                      }
                       className="w-full gradient-primary"
                     >
                       {activeTab === "deposit" ? "Add Money" : "Withdraw Money"}
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center">
-                      This is a demo/virtual trading environment. No real money is involved.
+                      This is a demo/virtual trading environment. No real money
+                      is involved.
                     </p>
                     <p className="text-xs text-muted-foreground text-center">
                       Maximum balance: ₹50,00,000
@@ -174,7 +191,9 @@ const Money = () => {
           <div className="lg:col-span-2">
             <Card className="bg-card border-border shadow-elegant">
               <CardHeader>
-                <CardTitle>Transaction History ({transactions.length})</CardTitle>
+                <CardTitle>
+                  Transaction History ({transactions.length})
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {transactions.length === 0 ? (
@@ -200,16 +219,26 @@ const Money = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={`font-bold ${
-                            tx.type === "DEPOSIT" || tx.type === "SELL"
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }`}>
-                            {tx.type === "DEPOSIT" || tx.type === "SELL" ? "+" : "-"}
-                            ₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          <p
+                            className={`font-bold ${
+                              tx.type === "DEPOSIT" || tx.type === "SELL"
+                                ? "text-green-500"
+                                : "text-red-500"
+                            }`}
+                          >
+                            {tx.type === "DEPOSIT" || tx.type === "SELL"
+                              ? "+"
+                              : "-"}
+                            ₹
+                            {tx.amount.toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                            })}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Balance: ₹{tx.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            Balance: ₹
+                            {tx.balance.toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                            })}
                           </p>
                         </div>
                       </div>
@@ -223,7 +252,7 @@ const Money = () => {
       </main>
 
       <Footer />
-    </div>
+    </MainLayout>
   );
 };
 

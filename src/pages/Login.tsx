@@ -19,9 +19,10 @@ const Login = () => {
     setIsLoading(true);
     
     // TODO: Implement actual authentication logic with Lovable Cloud
-    setTimeout(() => {
-      setIsLoading(false);
+setTimeout(() => {
+      localStorage.setItem("prostock_auth", "true");
       navigate("/dashboard");
+      setIsLoading(false);
     }, 1000);
   };
 

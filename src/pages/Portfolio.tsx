@@ -1,16 +1,33 @@
-import { useState } from "react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import Footer from "@/components/Footer";
-import { useTrading } from "@/contexts/TradingContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Eye, EyeOff } from "lucide-react";
+import MainLayout from "@/components/MainLayout";
 import { TradeModal } from "@/components/trading/TradeModal";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTrading } from "@/contexts/TradingContext";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Eye,
+  EyeOff,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useState } from "react";
 
 const Portfolio = () => {
-  const { portfolio, balance, getTotalInvestment, getTotalCurrentValue, getTotalProfitLoss } = useTrading();
+  const {
+    portfolio,
+    balance,
+    getTotalInvestment,
+    getTotalCurrentValue,
+    getTotalProfitLoss,
+  } = useTrading();
   const [showValues, setShowValues] = useState(true);
-  const [tradeModal, setTradeModal] = useState<{ isOpen: boolean; stock: any; type: "BUY" | "SELL" }>({
+  const [tradeModal, setTradeModal] = useState<{
+    isOpen: boolean;
+    stock: any;
+    type: "BUY" | "SELL";
+  }>({
     isOpen: false,
     stock: null,
     type: "BUY",
@@ -19,7 +36,8 @@ const Portfolio = () => {
   const totalInvestment = getTotalInvestment();
   const currentValue = getTotalCurrentValue();
   const profitLoss = getTotalProfitLoss();
-  const profitLossPercent = totalInvestment > 0 ? (profitLoss / totalInvestment) * 100 : 0;
+  const profitLossPercent =
+    totalInvestment > 0 ? (profitLoss / totalInvestment) * 100 : 0;
 
   const openTradeModal = (holding: any, type: "BUY" | "SELL") => {
     setTradeModal({
@@ -34,13 +52,16 @@ const Portfolio = () => {
   };
 
   const maskValue = (value: number) => {
-    return showValues ? `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "••,•••.••";
+    return showValues
+      ? `₹${value.toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+      : "••,•••.••";
   };
 
   return (
-    <div className="min-h-screen gradient-hero transition-theme">
-      <DashboardHeader />
-      
+    <MainLayout>
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Header */}
         <div className="mb-8">
@@ -65,7 +86,11 @@ const Portfolio = () => {
                 className="h-6 w-6"
                 onClick={() => setShowValues(!showValues)}
               >
-                {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                {showValues ? (
+                  <Eye className="h-4 w-4" />
+                ) : (
+                  <EyeOff className="h-4 w-4" />
+                )}
               </Button>
             </CardHeader>
             <CardContent>
@@ -80,7 +105,9 @@ const Portfolio = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{maskValue(totalInvestment)}</div>
+              <div className="text-2xl font-bold">
+                {maskValue(totalInvestment)}
+              </div>
             </CardContent>
           </Card>
 
@@ -91,7 +118,9 @@ const Portfolio = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{maskValue(currentValue)}</div>
+              <div className="text-2xl font-bold">
+                {maskValue(currentValue)}
+              </div>
             </CardContent>
           </Card>
 
@@ -102,15 +131,26 @@ const Portfolio = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold flex items-center gap-2 ${
-                profitLoss >= 0 ? 'text-green-500' : 'text-red-500'
-              }`}>
-                {profitLoss >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
+              <div
+                className={`text-2xl font-bold flex items-center gap-2 ${
+                  profitLoss >= 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {profitLoss >= 0 ? (
+                  <TrendingUp className="w-5 h-5" />
+                ) : (
+                  <TrendingDown className="w-5 h-5" />
+                )}
                 {maskValue(Math.abs(profitLoss))}
               </div>
               {showValues && (
-                <p className={`text-sm ${profitLoss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {profitLoss >= 0 ? '+' : '-'}{Math.abs(profitLossPercent).toFixed(2)}%
+                <p
+                  className={`text-sm ${
+                    profitLoss >= 0 ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {profitLoss >= 0 ? "+" : "-"}
+                  {Math.abs(profitLossPercent).toFixed(2)}%
                 </p>
               )}
             </CardContent>
@@ -126,7 +166,7 @@ const Portfolio = () => {
             {portfolio.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">No holdings yet</p>
-                <Button onClick={() => window.location.href = '/stocks'}>
+                <Button onClick={() => (window.location.href = "/stocks")}>
                   Start Trading
                 </Button>
               </div>
@@ -135,13 +175,27 @@ const Portfolio = () => {
                 <table className="w-full">
                   <thead className="border-b border-border">
                     <tr className="text-left">
-                      <th className="pb-3 font-medium text-muted-foreground">Stock</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Qty</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Avg Price</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">LTP</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Current Value</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">P&L</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Actions</th>
+                      <th className="pb-3 font-medium text-muted-foreground">
+                        Stock
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Qty
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Avg Price
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        LTP
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Current Value
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        P&L
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -152,25 +206,50 @@ const Portfolio = () => {
                       const plPercent = (pl / invested) * 100;
 
                       return (
-                        <tr key={holding.symbol} className="border-b border-border hover:bg-muted/50 transition-colors">
+                        <tr
+                          key={holding.symbol}
+                          className="border-b border-border hover:bg-muted/50 transition-colors"
+                        >
                           <td className="py-4">
                             <div>
                               <p className="font-medium">{holding.symbol}</p>
-                              <p className="text-sm text-muted-foreground">{holding.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {holding.name}
+                              </p>
                             </div>
                           </td>
-                          <td className="py-4 text-right">{holding.quantity}</td>
-                          <td className="py-4 text-right">₹{holding.avgPrice.toFixed(2)}</td>
-                          <td className="py-4 text-right font-medium">₹{holding.currentPrice.toFixed(2)}</td>
-                          <td className="py-4 text-right font-medium">
-                            ₹{current.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          <td className="py-4 text-right">
+                            {holding.quantity}
                           </td>
-                          <td className={`py-4 text-right font-medium ${pl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                          <td className="py-4 text-right">
+                            ₹{holding.avgPrice.toFixed(2)}
+                          </td>
+                          <td className="py-4 text-right font-medium">
+                            ₹{holding.currentPrice.toFixed(2)}
+                          </td>
+                          <td className="py-4 text-right font-medium">
+                            ₹
+                            {current.toLocaleString("en-IN", {
+                              minimumFractionDigits: 2,
+                            })}
+                          </td>
+                          <td
+                            className={`py-4 text-right font-medium ${
+                              pl >= 0 ? "text-green-500" : "text-red-500"
+                            }`}
+                          >
                             <div className="flex items-center justify-end gap-1">
-                              {pl >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                              {pl >= 0 ? (
+                                <ArrowUpRight className="w-4 h-4" />
+                              ) : (
+                                <ArrowDownRight className="w-4 h-4" />
+                              )}
                               <span>₹{Math.abs(pl).toFixed(2)}</span>
                             </div>
-                            <span className="text-xs">({pl >= 0 ? '+' : ''}{plPercent.toFixed(2)}%)</span>
+                            <span className="text-xs">
+                              ({pl >= 0 ? "+" : ""}
+                              {plPercent.toFixed(2)}%)
+                            </span>
                           </td>
                           <td className="py-4 text-right">
                             <div className="flex gap-2 justify-end">
@@ -207,11 +286,13 @@ const Portfolio = () => {
 
       <TradeModal
         isOpen={tradeModal.isOpen}
-        onClose={() => setTradeModal({ isOpen: false, stock: null, type: "BUY" })}
+        onClose={() =>
+          setTradeModal({ isOpen: false, stock: null, type: "BUY" })
+        }
         stock={tradeModal.stock}
         type={tradeModal.type}
       />
-    </div>
+    </MainLayout>
   );
 };
 

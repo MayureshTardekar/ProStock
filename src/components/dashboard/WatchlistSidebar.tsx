@@ -1,140 +1,157 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ShoppingCart, BadgeDollarSign } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
-// Stock data for each index
-const NIFTY_50_STOCKS = [
-  { name: "Reliance Industries", exchange: "NSE", symbol: "RELIANCE", price: "1,285.50", change: "8.25", percent: "0.65%", isPositive: true },
-  { name: "TCS", exchange: "NSE", symbol: "TCS", price: "4,150.75", change: "-15.30", percent: "-0.37%", isPositive: false },
-  { name: "HDFC Bank", exchange: "NSE", symbol: "HDFCBANK", price: "1,745.80", change: "12.50", percent: "0.72%", isPositive: true },
-  { name: "Infosys", exchange: "NSE", symbol: "INFY", price: "1,850.60", change: "18.40", percent: "1.00%", isPositive: true },
-  { name: "ICICI Bank", exchange: "NSE", symbol: "ICICIBANK", price: "1,280.35", change: "-8.25", percent: "-0.64%", isPositive: false },
-  { name: "Hindustan Unilever", exchange: "NSE", symbol: "HINDUNILVR", price: "2,350.90", change: "15.60", percent: "0.67%", isPositive: true },
-  { name: "ITC Limited", exchange: "NSE", symbol: "ITC", price: "465.75", change: "3.50", percent: "0.76%", isPositive: true },
+// Top 10 weighted stocks for each index (symbol + friendly name)
+const NIFTY50 = [
+  { symbol: "RELIANCE.NS", name: "Reliance Industries" },
+  { symbol: "HDFCBANK.NS", name: "HDFC Bank" },
+  { symbol: "ICICIBANK.NS", name: "ICICI Bank" },
+  { symbol: "INFY.NS", name: "Infosys" },
+  { symbol: "ITC.NS", name: "ITC" },
+  { symbol: "TCS.NS", name: "TCS" },
+  { symbol: "LT.NS", name: "Larsen & Toubro" },
+  { symbol: "SBIN.NS", name: "SBI" },
+  { symbol: "BHARTIARTL.NS", name: "Bharti Airtel" },
+  { symbol: "AXISBANK.NS", name: "Axis Bank" },
 ];
 
-const BANK_NIFTY_STOCKS = [
-  { name: "HDFC Bank", exchange: "NSE", symbol: "HDFCBANK", price: "1,745.80", change: "12.50", percent: "0.72%", isPositive: true },
-  { name: "ICICI Bank", exchange: "NSE", symbol: "ICICIBANK", price: "1,280.35", change: "-8.25", percent: "-0.64%", isPositive: false },
-  { name: "State Bank of India", exchange: "NSE", symbol: "SBIN", price: "825.45", change: "-5.80", percent: "-0.70%", isPositive: false },
-  { name: "Kotak Mahindra Bank", exchange: "NSE", symbol: "KOTAKBANK", price: "1,780.60", change: "-10.20", percent: "-0.57%", isPositive: false },
-  { name: "Axis Bank", exchange: "NSE", symbol: "AXISBANK", price: "1,150.80", change: "9.50", percent: "0.83%", isPositive: true },
-  { name: "IndusInd Bank", exchange: "NSE", symbol: "INDUSINDBK", price: "751.00", change: "11.50", percent: "1.56%", isPositive: true },
-  { name: "Bajaj Finance", exchange: "NSE", symbol: "BAJFINANCE", price: "7,250.40", change: "-35.60", percent: "-0.49%", isPositive: false },
+const BANKNIFTY = [
+  { symbol: "HDFCBANK.NS", name: "HDFC Bank" },
+  { symbol: "ICICIBANK.NS", name: "ICICI Bank" },
+  { symbol: "SBIN.NS", name: "SBI" },
+  { symbol: "AXISBANK.NS", name: "Axis Bank" },
+  { symbol: "KOTAKBANK.NS", name: "Kotak Bank" },
+  { symbol: "INDUSINDBK.NS", name: "IndusInd Bank" },
+  { symbol: "AUBANK.NS", name: "AU Bank" },
+  { symbol: "PNB.NS", name: "PNB" },
+  { symbol: "IDFCFIRSTB.NS", name: "IDFC First Bank" },
+  { symbol: "BANDHANBNK.NS", name: "Bandhan Bank" },
 ];
 
-const FIN_NIFTY_STOCKS = [
-  { name: "HDFC Bank", exchange: "NSE", symbol: "HDFCBANK", price: "1,745.80", change: "12.50", percent: "0.72%", isPositive: true },
-  { name: "ICICI Bank", exchange: "NSE", symbol: "ICICIBANK", price: "1,280.35", change: "-8.25", percent: "-0.64%", isPositive: false },
-  { name: "Bajaj Finance", exchange: "NSE", symbol: "BAJFINANCE", price: "7,250.40", change: "-35.60", percent: "-0.49%", isPositive: false },
-  { name: "Bajaj Finserv", exchange: "NSE", symbol: "BAJAJFINSV", price: "1,650.25", change: "22.75", percent: "1.40%", isPositive: true },
-  { name: "SBI Life Insurance", exchange: "NSE", symbol: "SBILIFE", price: "1,580.90", change: "14.30", percent: "0.91%", isPositive: true },
-  { name: "HDFC Life Insurance", exchange: "NSE", symbol: "HDFCLIFE", price: "680.50", change: "-5.20", percent: "-0.76%", isPositive: false },
-  { name: "Shriram Finance", exchange: "NSE", symbol: "SHRIRAMFIN", price: "2,890.75", change: "28.50", percent: "1.00%", isPositive: true },
+const FINNIFTY = [
+  { symbol: "HDFCBANK.NS", name: "HDFC Bank" },
+  { symbol: "ICICIBANK.NS", name: "ICICI Bank" },
+  { symbol: "BAJFINANCE.NS", name: "Bajaj Finance" },
+  { symbol: "KOTAKBANK.NS", name: "Kotak Bank" },
+  { symbol: "HDFCLIFE.NS", name: "HDFC Life" },
+  { symbol: "SBIN.NS", name: "SBI" },
+  { symbol: "AXISBANK.NS", name: "Axis Bank" },
+  { symbol: "BAJAJFINSV.NS", name: "Bajaj Finserv" },
+  { symbol: "ICICIPRULI.NS", name: "ICICI Pru Life" },
+  { symbol: "HDFC.NS", name: "HDFC" },
 ];
+
+const ALL: Record<string, { symbol: string; name: string }[]> = {
+  nifty: NIFTY50,
+  bank: BANKNIFTY,
+  fin: FINNIFTY,
+};
+
+const REFRESH_MS = 60_000;
+
+async function fetchQuote(symbolNS: string) {
+  const isDevHost = typeof window !== 'undefined' && /localhost|127\.|0\.0\.0\.0|::1/.test(window.location.hostname);
+  const proxied = `/yahoo/v8/finance/chart/${encodeURIComponent(symbolNS)}?range=1d&interval=1m&_=${Date.now()}`;
+  const absolute = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbolNS)}?range=1d&interval=1m&_=${Date.now()}`;
+  let res = await fetch(isDevHost ? proxied : absolute);
+  if (!res.ok) res = await fetch(absolute);
+  if (!res.ok) throw new Error(String(res.status));
+  const j = await res.json();
+  const r = j?.chart?.result?.[0];
+  const m = r?.meta || {};
+  const price = Number(m.regularMarketPrice ?? m.previousClose ?? 0);
+  const change = Number(m.regularMarketChange ?? (m.regularMarketPrice!=null && m.previousClose!=null ? m.regularMarketPrice - m.previousClose : 0));
+  const percent = Number(m.regularMarketChangePercent ?? (m.regularMarketPrice!=null && m.previousClose ? ((m.regularMarketPrice - m.previousClose)/m.previousClose)*100 : 0));
+  return { price, change, percent };
+}
 
 export const WatchlistSidebar = () => {
-  const [activeTab, setActiveTab] = useState("nifty50");
+  const [tab, setTab] = useState<'nifty'|'bank'|'fin'>('nifty');
+  const [rows, setRows] = useState<Record<string,{price:number,change:number,percent:number}>>({});
 
-  const getStocksForTab = () => {
-    switch (activeTab) {
-      case "banknifty":
-        return BANK_NIFTY_STOCKS;
-      case "finnifty":
-        return FIN_NIFTY_STOCKS;
-      default:
-        return NIFTY_50_STOCKS;
-    }
+  const load = useMemo(()=> async (symbols: {symbol:string}[])=>{
+    const entries = await Promise.all(symbols.map(async s=>{ try { const r = await fetchQuote(s.symbol); return [s.symbol,r] as const;} catch { return [s.symbol,{price:0,change:0,percent:0}] as const; }}));
+    setRows(prev=>({ ...prev, ...Object.fromEntries(entries) }));
+  },[]);
+
+  useEffect(()=>{ load(NIFTY50); load(BANKNIFTY); load(FINNIFTY); const id=setInterval(()=>{ load(NIFTY50); load(BANKNIFTY); load(FINNIFTY); }, REFRESH_MS); return ()=>clearInterval(id); },[load]);
+
+  const triggerTrade = (type: 'BUY'|'SELL', baseSymbol: string, name: string, price: number)=>{
+    const detail = { type, stock: { symbol: baseSymbol, name, price } };
+    window.dispatchEvent(new CustomEvent('prostock-trade', { detail }));
   };
 
-  const stocks = getStocksForTab();
+  const renderList = (symbols: {symbol:string; name:string}[]) => (
+    <div className="space-y-2">
+      {symbols.map((it, idx)=>{
+        const base = it.symbol.replace('.NS','');
+        const r = rows[it.symbol] || {price:0,change:0,percent:0};
+        const isUp = r.change >= 0;
+        return (
+          <Card key={it.symbol} className="p-3 border-l-4 bg-card">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-semibold text-sm truncate flex items-center gap-2">
+                  <span className="inline-block h-2 w-2 rounded-full" style={{backgroundColor: idx<3? 'hsl(var(--primary))':'hsl(var(--muted-foreground))'}} />
+                  {it.name}
+                  <span className="text-xs text-muted-foreground">{base}</span>
+                </div>
+                <div className={`text-xs ${isUp?'text-green-500':'text-red-500'} flex items-center gap-1 mt-0.5`}>
+                  {isUp? <TrendingUp className="w-3 h-3"/> : <TrendingDown className="w-3 h-3"/>}
+                  {isUp?'+':''}{r.change.toFixed(2)} ({isUp?'+':''}{r.percent.toFixed(2)}%)
+                </div>
+              </div>
+              <div className="text-right flex items-center gap-3">
+                <div className="text-sm font-bold min-w-[86px] text-right">₹{r.price.toLocaleString('en-IN',{maximumFractionDigits:2})}</div>
+                <div className="flex gap-2">
+                  <Button size="sm" className="h-7 px-3 bg-green-600 text-white hover:bg-green-700" onClick={()=>triggerTrade('BUY', base, it.name, r.price)}>
+                    Buy
+                  </Button>
+                  <Button size="sm" variant="destructive" className="h-7 px-3" onClick={()=>triggerTrade('SELL', base, it.name, r.price)}>
+                    Sell
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        );
+      })}
+    </div>
+  );
 
   return (
-    <aside className="w-96 bg-card border-r border-border p-4 space-y-4 h-[calc(100vh-116px)] overflow-y-auto transition-theme">
+    <aside className="w-96 bg-card border-r border-border p-4 space-y-3 h-[calc(100vh-7rem)] overflow-y-auto transition-theme">
       <TooltipProvider>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+        <Tabs value={tab} onValueChange={(v)=>setTab(v as any)} className="w-full">
+          {/* Tabs placed clear below ticker */}
+          <TabsList className="grid w-full grid-cols-3 mb-3 sticky top-0 z-10 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
             <Tooltip>
               <TooltipTrigger asChild>
-                <TabsTrigger value="nifty50" className="text-xs">
-                  Nifty 50
-                </TabsTrigger>
+                <TabsTrigger value="nifty" className="text-xs">Nifty 50</TabsTrigger>
               </TooltipTrigger>
-              <TooltipContent>
-                <p>Top 50 companies by market cap on NSE</p>
-              </TooltipContent>
+              <TooltipContent>Top weighted stocks of NIFTY 50</TooltipContent>
             </Tooltip>
-            
             <Tooltip>
               <TooltipTrigger asChild>
-                <TabsTrigger value="banknifty" className="text-xs">
-                  Bank Nifty
-                </TabsTrigger>
+                <TabsTrigger value="bank" className="text-xs">Bank Nifty</TabsTrigger>
               </TooltipTrigger>
-              <TooltipContent>
-                <p>Banking sector index with 12 major banks</p>
-              </TooltipContent>
+              <TooltipContent>Top weighted stocks of BANKNIFTY</TooltipContent>
             </Tooltip>
-            
             <Tooltip>
               <TooltipTrigger asChild>
-                <TabsTrigger value="finnifty" className="text-xs">
-                  Fin Nifty
-                </TabsTrigger>
+                <TabsTrigger value="fin" className="text-xs">Fin Nifty</TabsTrigger>
               </TooltipTrigger>
-              <TooltipContent>
-                <p>Financial services sector index</p>
-              </TooltipContent>
+              <TooltipContent>Top weighted stocks of FINNIFTY</TooltipContent>
             </Tooltip>
           </TabsList>
 
-          <TabsContent value={activeTab} className="space-y-2 mt-0">
-            {/* Stocks List */}
-            <div className="space-y-2">
-              {stocks.map((stock, index) => (
-                <Card
-                  key={stock.symbol}
-                  className="p-3 hover:shadow-elegant transition-all hover:scale-[1.01] cursor-pointer border-l-4 bg-card"
-                  style={{
-                    borderLeftColor:
-                      index === 0
-                        ? "hsl(var(--primary))"
-                        : index === 1
-                        ? "hsl(217.2, 91.2%, 59.8%)"
-                        : index === 2
-                        ? "hsl(var(--primary))"
-                        : "hsl(var(--muted))",
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">{stock.name}</p>
-                      <p className="text-xs text-muted-foreground">{stock.exchange}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-sm">₹{stock.price}</p>
-                      <div
-                        className={`flex items-center gap-1 text-xs ${
-                          stock.isPositive ? "text-green-500" : "text-red-500"
-                        }`}
-                      >
-                        {stock.isPositive ? (
-                          <TrendingUp className="w-3 h-3" />
-                        ) : (
-                          <TrendingDown className="w-3 h-3" />
-                        )}
-                        <span>
-                          {stock.change} ({stock.percent})
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
+          <TabsContent value="nifty" className="space-y-2 mt-0">{renderList(NIFTY50)}</TabsContent>
+          <TabsContent value="bank" className="space-y-2 mt-0">{renderList(BANKNIFTY)}</TabsContent>
+          <TabsContent value="fin" className="space-y-2 mt-0">{renderList(FINNIFTY)}</TabsContent>
         </Tabs>
       </TooltipProvider>
     </aside>

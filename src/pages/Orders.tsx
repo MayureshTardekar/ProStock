@@ -1,28 +1,26 @@
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import Footer from "@/components/Footer";
-import { useTrading } from "@/contexts/TradingContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MainLayout from "@/components/MainLayout";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTrading } from "@/contexts/TradingContext";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 const Orders = () => {
   const { orders } = useTrading();
 
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return date.toLocaleString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   return (
-    <div className="min-h-screen gradient-hero transition-theme">
-      <DashboardHeader />
-      
+    <MainLayout>
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Header */}
         <div className="mb-8">
@@ -52,29 +50,50 @@ const Orders = () => {
                 <table className="w-full">
                   <thead className="border-b border-border">
                     <tr className="text-left">
-                      <th className="pb-3 font-medium text-muted-foreground">Date & Time</th>
-                      <th className="pb-3 font-medium text-muted-foreground">Stock</th>
-                      <th className="pb-3 font-medium text-muted-foreground">Type</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Qty</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Price</th>
-                      <th className="pb-3 font-medium text-muted-foreground text-right">Total</th>
-                      <th className="pb-3 font-medium text-muted-foreground">Status</th>
+                      <th className="pb-3 font-medium text-muted-foreground">
+                        Date & Time
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground">
+                        Stock
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground">
+                        Type
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Qty
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Price
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground text-right">
+                        Total
+                      </th>
+                      <th className="pb-3 font-medium text-muted-foreground">
+                        Status
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {orders.map((order) => (
-                      <tr key={order.id} className="border-b border-border hover:bg-muted/50 transition-colors">
+                      <tr
+                        key={order.id}
+                        className="border-b border-border hover:bg-muted/50 transition-colors"
+                      >
                         <td className="py-4">
-                          <span className="text-sm">{formatDate(order.timestamp)}</span>
+                          <span className="text-sm">
+                            {formatDate(order.timestamp)}
+                          </span>
                         </td>
                         <td className="py-4">
                           <div>
                             <p className="font-medium">{order.symbol}</p>
-                            <p className="text-xs text-muted-foreground">{order.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {order.name}
+                            </p>
                           </div>
                         </td>
                         <td className="py-4">
-                          <Badge 
+                          <Badge
                             variant="outline"
                             className={`${
                               order.type === "BUY"
@@ -93,12 +112,20 @@ const Orders = () => {
                           </Badge>
                         </td>
                         <td className="py-4 text-right">{order.quantity}</td>
-                        <td className="py-4 text-right">₹{order.price.toFixed(2)}</td>
+                        <td className="py-4 text-right">
+                          ₹{order.price.toFixed(2)}
+                        </td>
                         <td className="py-4 text-right font-medium">
-                          ₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          ₹
+                          {order.total.toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                          })}
                         </td>
                         <td className="py-4">
-                          <Badge variant="outline" className="border-primary text-primary">
+                          <Badge
+                            variant="outline"
+                            className="border-primary text-primary"
+                          >
                             {order.status}
                           </Badge>
                         </td>
@@ -113,7 +140,7 @@ const Orders = () => {
       </main>
 
       <Footer />
-    </div>
+    </MainLayout>
   );
 };
 
