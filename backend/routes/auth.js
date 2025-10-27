@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
     // Insert user
     const [result] = await pool.query(
       'INSERT INTO users (full_name, email, password_hash, balance) VALUES (?, ?, ?, ?)',
-      [fullName, email, passwordHash, 500000.00]
+      [fullName, email, passwordHash, 100000.00]
     );
 
     const userId = result.insertId;
@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
     // Create welcome transaction
     await pool.query(
       'INSERT INTO transactions (user_id, tx_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)',
-      [userId, 'DEPOSIT', 500000.00, 500000.00, 'Welcome to ProStock! Paper trading account credited.']
+      [userId, 'DEPOSIT', 100000.00, 100000.00, 'Welcome to ProStock! Paper trading account credited.']
     );
 
     // Generate JWT
@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: { id: userId, fullName, email, balance: 500000.00 }
+      user: { id: userId, fullName, email, balance: 100000.00 }
     });
   } catch (error) {
     console.error('[REGISTER ERROR]', error);

@@ -18,12 +18,35 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // TODO: Implement actual authentication logic with Lovable Cloud
-setTimeout(() => {
-      localStorage.setItem("prostock_auth", "true");
-      navigate("/dashboard");
+    try {
+      // Call backend login API
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Clear any previous user's cached data
+        localStorage.removeItem("userProfile");
+        localStorage.removeItem("prostock_trading_data");
+        
+        // Store auth token and user info
+        localStorage.setItem("prostock_auth", "true");
+        localStorage.setItem("prostock_token", data.token);
+        localStorage.setItem("prostock_user", JSON.stringify(data.user));
+        navigate("/dashboard");
+      } else {
+        alert(data.message || "Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Failed to connect to server. Please ensure backend is running.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

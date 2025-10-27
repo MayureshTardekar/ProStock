@@ -60,11 +60,39 @@ const Register = () => {
 
     setIsLoading(true);
     
-    // TODO: Implement actual registration logic with Lovable Cloud
-    setTimeout(() => {
+    try {
+      // Call backend register API
+      const response = await fetch('http://localhost:3001/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Clear any previous user's cached data
+        localStorage.removeItem("userProfile");
+        localStorage.removeItem("prostock_trading_data");
+        
+        // Store auth token and user info
+        localStorage.setItem("prostock_auth", "true");
+        localStorage.setItem("prostock_token", data.token);
+        localStorage.setItem("prostock_user", JSON.stringify(data.user));
+        navigate("/dashboard");
+      } else {
+        alert(data.message || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Failed to connect to server. Please ensure backend is running.");
+    } finally {
       setIsLoading(false);
-      navigate("/dashboard");
-    }, 1000);
+    }
   };
 
   return (

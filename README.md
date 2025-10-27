@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+=======
+<!-- cd C:\Users\MAYURESH\Desktop\MCA\crashed\Prostock2\Prostock1\prostock-prime-page\backend
+npm run dev
+cd C:\Users\MAYURESH\Desktop\MCA\crashed\Prostock2\Prostock1\prostock-prime-page
+npm run dev -->
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 # 📈 ProStock
 
 <p align="center">
@@ -41,6 +49,7 @@ ProStock is a **feature-rich paper trading platform** for Indian stock markets (
 ## ✨ Key Features
 
 ### 💹 Trading & Portfolio
+<<<<<<< HEAD
 - **Live Trading** - Real-time buy/sell with instant confirmation
 - **Portfolio Tracking** - Real-time holdings, P&L, and performance analytics
 - **Order History** - Complete trade history with detailed breakdowns
@@ -83,6 +92,55 @@ ProStock is a **feature-rich paper trading platform** for Indian stock markets (
 - MySQL Workbench for database management
 - Postman for API testing
 
+=======
+
+- **Live Trading** - Real-time buy/sell with instant confirmation
+- **Portfolio Tracking** - Real-time holdings, P&L, and performance analytics
+- **Order History** - Complete trade history with detailed breakdowns
+- **Money Management** - Virtual funds with ₹5,00,000 starting balance
+
+### 📈 Market Intelligence
+
+- **Live Market Data** - Real-time NSE/BSE prices via Yahoo Finance
+- **Market Indices** - NIFTY 50, SENSEX, BANK NIFTY tracking
+- **Stock Discovery** - Advanced search and trending stocks
+- **Watchlist** - Save and monitor favorite stocks
+
+### 🎨 User Experience
+
+- **Dark/Light Mode** - Elegant theme switching
+- **Responsive Design** - Perfect on all devices
+- **Smart Notifications** - Real-time trade and account alerts
+- **Modern UI** - Built with shadcn/ui and Tailwind CSS
+
+---
+
+## 🏗️ Tech Stack
+
+|    Frontend     |    Backend    |    Database    |    Tools     |
+| :-------------: | :-----------: | :------------: | :----------: |
+|  ⚛️ React 18.3  |  🟢 Node.js   |  🐬 MySQL 8.0  |  ⚡ Vite 5   |
+|  📘 TypeScript  | 🚂 Express.js |  🔐 JWT Auth   | 🎨 Tailwind  |
+|   🧩 Radix UI   |   🔒 bcrypt   | 💾 Connections | 🎭 shadcn/ui |
+| 🔄 React Router |   📡 Axios    |   🗂️ Indexed   | 📊 Recharts  |
+
+---
+
+## 📋 Prerequisites
+
+**Required:**
+
+- Node.js ≥18.0.0
+- MySQL ≥8.0.0
+- npm ≥9.0.0
+
+**Recommended:**
+
+- VS Code with ESLint, Prettier, Tailwind IntelliSense
+- MySQL Workbench for database management
+- Postman for API testing
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 ---
 
 ## 🚀 Quick Start
@@ -145,6 +203,7 @@ FRONTEND_URL=http://localhost:8080
 
 ```typescript
 // Register new user
+<<<<<<< HEAD
 const response = await fetch('http://localhost:3001/api/auth/register', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -153,12 +212,23 @@ const response = await fetch('http://localhost:3001/api/auth/register', {
     email: 'john@example.com',
     password: 'secure123'
   })
+=======
+const response = await fetch("http://localhost:3001/api/auth/register", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    fullName: "John Doe",
+    email: "john@example.com",
+    password: "secure123",
+  }),
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 });
 
 const { token, user } = await response.json();
 // User gets ₹5,00,000 initial balance
 
 // Buy stocks
+<<<<<<< HEAD
 await fetch('http://localhost:3001/api/orders', {
   method: 'POST',
   headers: {
@@ -172,21 +242,46 @@ await fetch('http://localhost:3001/api/orders', {
     quantity: 10,
     price: 2500.00
   })
+=======
+await fetch("http://localhost:3001/api/orders", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    symbol: "RELIANCE",
+    name: "Reliance Industries",
+    type: "BUY",
+    quantity: 10,
+    price: 2500.0,
+  }),
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 });
 ```
 
 ### Example 2: React Component with Trading Context
 
 ```typescript
+<<<<<<< HEAD
 import { useTrading } from '@/contexts/TradingContext';
+=======
+import { useTrading } from "@/contexts/TradingContext";
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 
 function TradingCard() {
   const { balance, portfolio, buyStock } = useTrading();
 
   const handleBuy = async () => {
+<<<<<<< HEAD
     const stock = { symbol: 'TCS', name: 'TCS Ltd', price: 3500 };
     const success = await buyStock(stock, 5);
     if (success) console.log('Purchase successful!');
+=======
+    const stock = { symbol: "TCS", name: "TCS Ltd", price: 3500 };
+    const success = await buyStock(stock, 5);
+    if (success) console.log("Purchase successful!");
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
   };
 
   return (
@@ -253,6 +348,10 @@ notifications  # User alerts and messages
 **Schema File:** `backend/database/schema.sql`
 
 **Quick Setup:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 ```bash
 mysql -u root -p < backend/database/schema.sql
 ```
@@ -329,6 +428,10 @@ git push origin feature/amazing-feature
 ```
 
 **Commit Convention:** Use [Conventional Commits](https://www.conventionalcommits.org/)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation
@@ -340,18 +443,30 @@ git push origin feature/amazing-feature
 ## 🗺️ Roadmap
 
 ### v1.1 (Q1 2026)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - [ ] Full backend authentication integration
 - [ ] Real-time WebSocket for live prices
 - [ ] Advanced charting with indicators
 - [ ] Email notifications
 
 ### v1.2 (Q2 2026)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - [ ] Options & Futures trading
 - [ ] Mutual funds support
 - [ ] Portfolio analytics dashboard
 - [ ] Mobile app (React Native)
 
 ### v2.0 (Q3 2026)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - [ ] Stop Loss & Limit orders
 - [ ] Algorithmic trading
 - [ ] Backtesting engine
@@ -364,11 +479,19 @@ git push origin feature/amazing-feature
 ### Current Limitations
 
 1. **Data Storage**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
    - Currently using localStorage (browser-only)
    - Backend integration planned for permanent storage
    - **Status:** High priority
 
 2. **Market Data**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
    - Updates every 60 seconds (not true real-time)
    - Yahoo Finance API rate limits may apply
    - **Status:** Acceptable for paper trading
@@ -379,6 +502,10 @@ git push origin feature/amazing-feature
    - **Status:** In progress
 
 ### Browser Support
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - ✅ Chrome 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
@@ -409,10 +536,18 @@ copies or substantial portions of the Software.
 ## 👥 Maintainers
 
 **Mayuresh Tardekar**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - GitHub: [@MayureshTardekar](https://github.com/MayureshTardekar)
 - Email: mayutardekar1205@gmail.com
 
 ### Support
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54b8f69 (feat: Complete database integration with MySQL)
 - 📧 Email: mayutardekar1205@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/MayureshTardekar/prostock-prime-page/issues)
 

@@ -84,7 +84,7 @@ const MarketTicker = () => {
       }));
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40 bg-card/90 backdrop-blur-md border-b border-border shadow-sm transition-theme">
+    <div className="fixed top-20 left-0 right-0 z-40 bg-card/90 backdrop-blur-md border-b border-border shadow-sm transition-theme">
       <div className="overflow-hidden py-2">
         <div className="flex gap-8 animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused]">
           {[...tickerData, ...tickerData, ...tickerData].map((item, index) => (

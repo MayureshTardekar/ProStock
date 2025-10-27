@@ -74,7 +74,7 @@ const Stocks = () => {
       <MarketTicker />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         {/* Search Bar */}
         <div className="max-w-2xl mx-auto mb-12">
           <div className="relative">

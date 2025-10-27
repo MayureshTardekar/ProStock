@@ -51,11 +51,23 @@ const Navbar = () => {
     // Load profile image/name
     const loadProfile = () => {
       try {
-        const raw = localStorage.getItem("userProfile");
-        if (!raw) return;
-        const p = JSON.parse(raw);
-        setProfilePhoto(p.photo || null);
-        setProfileName(p.fullName || "User");
+        // Try userProfile first (for profile photo)
+        const userProfile = localStorage.getItem("userProfile");
+        if (userProfile) {
+          const p = JSON.parse(userProfile);
+          setProfilePhoto(p.photo || null);
+          if (p.fullName) {
+            setProfileName(p.fullName);
+            return;
+          }
+        }
+        
+        // Fallback to prostock_user (from registration/login)
+        const prostockUser = localStorage.getItem("prostock_user");
+        if (prostockUser) {
+          const user = JSON.parse(prostockUser);
+          setProfileName(user.fullName || "User");
+        }
       } catch {
         // Empty block statement
       }
@@ -95,8 +107,8 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-nav transition-theme">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link
             to={isAuthenticated ? "/dashboard" : "/"}
@@ -200,7 +212,7 @@ const Navbar = () => {
           )}
 
           {/* Right side */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 mr-6">
             {shouldShowAuthNavbar ? (
               /* Auth Pages (Landing/Login/Register): Show Login/Register buttons */
               <>
@@ -389,9 +401,9 @@ const Navbar = () => {
                       aria-label="Profile menu"
                       title="Account"
                     >
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-10 w-10">
                         <AvatarImage src={profilePhoto ?? undefined} />
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                        <AvatarFallback className="text-sm font-semibold bg-primary/10 text-primary">
                           {profileName
                             .split(" ")
                             .map((n) => n[0])
@@ -407,7 +419,12 @@ const Navbar = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => {
+                        // Clear all user data on logout
                         localStorage.removeItem("prostock_auth");
+                        localStorage.removeItem("prostock_token");
+                        localStorage.removeItem("prostock_user");
+                        localStorage.removeItem("userProfile");
+                        localStorage.removeItem("prostock_trading_data");
                         navigate("/login");
                       }}
                     >
