@@ -130,7 +130,7 @@ const Dashboard = () => {
 
       <div className="flex pt-4">
         {/* Left Sidebar - Watchlist - Sticky */}
-        <div className="sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto">
+        <div className="sticky top-28 h-[calc(100vh-7rem)] overflow-y-auto">
           <WatchlistSidebar />
         </div>
 

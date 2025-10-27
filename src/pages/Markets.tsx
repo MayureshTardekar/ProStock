@@ -142,7 +142,7 @@ export default function Markets() {
 
   return (
     <MainLayout>
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
           Trending as of Today
         </h1>

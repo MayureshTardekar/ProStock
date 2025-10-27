@@ -124,7 +124,7 @@ export const WatchlistSidebar = () => {
   );
 
   return (
-    <aside className="w-96 bg-card border-r border-border p-4 space-y-3 h-[calc(100vh-7rem)] overflow-y-auto transition-theme">
+    <aside className="w-96 bg-card border-r border-border p-4 space-y-3 h-[calc(100vh-7rem)] overflow-y-auto transition-theme scrollbar-hide">
       <TooltipProvider>
         <Tabs value={tab} onValueChange={(v)=>setTab(v as any)} className="w-full">
           {/* Tabs placed clear below ticker */}

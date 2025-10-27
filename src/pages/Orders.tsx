@@ -21,7 +21,7 @@ const Orders = () => {
 
   return (
     <MainLayout>
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
