@@ -232,7 +232,15 @@ export const DashboardHeader = () => {
                 <User className="mr-2 h-4 w-4" />
                 My Profile on ProStock
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/login")}>
+              <DropdownMenuItem onClick={() => {
+                // Clear all user data on logout
+                localStorage.removeItem("prostock_auth");
+                localStorage.removeItem("prostock_token");
+                localStorage.removeItem("prostock_user");
+                localStorage.removeItem("userProfile");
+                localStorage.removeItem("prostock_trading_data");
+                navigate("/login");
+              }}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

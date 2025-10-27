@@ -12,7 +12,31 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Live price fetcher
+async function fetchLivePrice(symbol: string) {
+  try {
+    const isDevHost =
+      typeof window !== "undefined" &&
+      /localhost|127\.|0\.0\.0\.0|::1/.test(window.location.hostname);
+    const symbolNS = `${symbol}.NS`;
+    const proxied = `/yahoo/v8/finance/chart/${encodeURIComponent(
+      symbolNS
+    )}?range=1d&interval=1m&_=${Date.now()}`;
+    const absolute = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+      symbolNS
+    )}?range=1d&interval=1m&_=${Date.now()}`;
+    let res = await fetch(isDevHost ? proxied : absolute);
+    if (!res.ok) res = await fetch(absolute);
+    if (!res.ok) throw new Error();
+    const j = await res.json();
+    const meta = j?.chart?.result?.[0]?.meta || {};
+    return Number(meta.regularMarketPrice ?? meta.previousClose ?? 0);
+  } catch {
+    return 0;
+  }
+}
 
 const Portfolio = () => {
   const {
@@ -23,6 +47,7 @@ const Portfolio = () => {
     getTotalProfitLoss,
   } = useTrading();
   const [showValues, setShowValues] = useState(true);
+  const [livePrices, setLivePrices] = useState<Record<string, number>>({});
   const [tradeModal, setTradeModal] = useState<{
     isOpen: boolean;
     stock: any;
@@ -33,6 +58,35 @@ const Portfolio = () => {
     type: "BUY",
   });
 
+  // Fetch live prices for all portfolio holdings
+  useEffect(() => {
+    const loadLivePrices = async () => {
+      const prices: Record<string, number> = {};
+      for (const holding of portfolio) {
+        const livePrice = await fetchLivePrice(holding.symbol);
+        if (livePrice > 0) {
+          prices[holding.symbol] = livePrice;
+        } else {
+          // Fallback to current price from database
+          prices[holding.symbol] = holding.currentPrice;
+        }
+      }
+      setLivePrices(prices);
+    };
+
+    if (portfolio.length > 0) {
+      loadLivePrices();
+      // Refresh every 60 seconds
+      const interval = setInterval(loadLivePrices, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [portfolio]);
+
+  // Get live price or fallback to database price
+  const getLivePrice = (symbol: string, fallbackPrice: number) => {
+    return livePrices[symbol] || fallbackPrice;
+  };
+
   const totalInvestment = getTotalInvestment();
   const currentValue = getTotalCurrentValue();
   const profitLoss = getTotalProfitLoss();
@@ -40,12 +94,13 @@ const Portfolio = () => {
     totalInvestment > 0 ? (profitLoss / totalInvestment) * 100 : 0;
 
   const openTradeModal = (holding: any, type: "BUY" | "SELL") => {
+    const livePrice = getLivePrice(holding.symbol, holding.currentPrice);
     setTradeModal({
       isOpen: true,
       stock: {
         symbol: holding.symbol,
         name: holding.name,
-        price: holding.currentPrice,
+        price: livePrice,
       },
       type,
     });
@@ -200,8 +255,9 @@ const Portfolio = () => {
                   </thead>
                   <tbody>
                     {portfolio.map((holding) => {
+                      const livePrice = getLivePrice(holding.symbol, holding.currentPrice);
                       const invested = holding.avgPrice * holding.quantity;
-                      const current = holding.currentPrice * holding.quantity;
+                      const current = livePrice * holding.quantity;
                       const pl = current - invested;
                       const plPercent = (pl / invested) * 100;
 
@@ -225,7 +281,7 @@ const Portfolio = () => {
                             ₹{holding.avgPrice.toFixed(2)}
                           </td>
                           <td className="py-4 text-right font-medium">
-                            ₹{holding.currentPrice.toFixed(2)}
+                            ₹{livePrice.toFixed(2)}
                           </td>
                           <td className="py-4 text-right font-medium">
                             ₹

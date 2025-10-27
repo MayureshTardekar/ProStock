@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   full_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  balance DECIMAL(14,2) DEFAULT 500000.00,
+  balance DECIMAL(14,2) DEFAULT 100000.00,
   profile_json JSON,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -95,9 +95,9 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- Create a default demo user (password: demo123)
 -- Password hash for 'demo123' using bcrypt (10 rounds)
 INSERT INTO users (full_name, email, password_hash, balance, profile_json) VALUES
-('Mayuresh Patil', 'demo@prostock.com', '$2b$10$YourHashedPasswordHere', 500000.00, 
+('Mayuresh Tardekar', 'demo@prostock.com', '$2b$10$YourHashedPasswordHere', 100000.00, 
 '{"gender":"Male","dob":"1998-05-15","pan":"ABCDE1234F","mobile":"+91 9876543210","ckyc":"XXXXXXXXXXXXXX","incomeRange":"₹5L - ₹10L","depository":"CDSL","exchanges":{"BSE":true,"NSE":true,"MCX":false,"NCDEX":false,"ICEX":false}}');
 
 -- Create initial welcome transaction for demo user
 INSERT INTO transactions (user_id, tx_type, amount, balance_after, description) VALUES
-(1, 'DEPOSIT', 500000.00, 500000.00, 'Welcome to ProStock! Paper trading account credited.');
+(1, 'DEPOSIT', 100000.00, 100000.00, 'Welcome to ProStock! Paper trading account credited.');

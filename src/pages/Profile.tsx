@@ -28,15 +28,45 @@ const Profile = () => {
         console.error("Failed to parse saved profile", e);
       }
     }
+    
+    // Load user data from registration
+    const storedUser = localStorage.getItem("prostock_user");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        return {
+          fullName: user.fullName || "",
+          email: user.email || "",
+          gender: "",
+          dob: "",
+          pan: "",
+          mobile: "",
+          ckyc: "",
+          incomeRange: "",
+          depository: "CDSL",
+          exchanges: {
+            BSE: true,
+            NSE: true,
+            MCX: false,
+            NCDEX: false,
+            ICEX: false,
+          },
+          photo: "",
+        };
+      } catch (e) {
+        console.error("Failed to parse user data", e);
+      }
+    }
+    
     return {
-      fullName: "Mayuresh Patil",
-      gender: "Male",
-      dob: "1998-05-15",
-      pan: "ABCDE1234F",
-      mobile: "+91 9876543210",
-      email: "mayuresh@prostock.com",
-      ckyc: "XXXXXXXXXXXXXX",
-      incomeRange: "₹5L - ₹10L",
+      fullName: "",
+      email: "",
+      gender: "",
+      dob: "",
+      pan: "",
+      mobile: "",
+      ckyc: "",
+      incomeRange: "",
       depository: "CDSL",
       exchanges: {
         BSE: true,

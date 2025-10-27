@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TradingProvider } from "@/contexts/TradingContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Stocks from "./pages/Stocks";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -29,6 +30,7 @@ const App = () => (
           <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/stocks" element={<Stocks />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
