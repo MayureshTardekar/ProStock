@@ -42,8 +42,8 @@ router.post('/register', async (req, res) => {
 
     // Create welcome transaction
     await pool.query(
-      'INSERT INTO transactions (user_id, tx_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)',
-      [userId, 'DEPOSIT', 100000.00, 100000.00, 'Welcome to ProStock! Paper trading account credited.']
+      'INSERT INTO transactions (user_id, tx_type, amount, balance_before, balance_after, description) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, 'DEPOSIT', 500000.00, 0.00, 500000.00, 'Welcome to ProStock! Paper trading account credited.']
     );
 
     // Generate JWT

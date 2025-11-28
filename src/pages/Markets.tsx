@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import MainLayout from "@/components/MainLayout";
+import { SearchStocks } from "@/components/SearchStocks";
 import { TradeModal } from "@/components/trading/TradeModal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -144,8 +145,23 @@ export default function Markets() {
     <MainLayout>
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <h1 className="text-3xl sm:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-          Trending as of Today
+          Markets
         </h1>
+        
+        {/* Search Bar */}
+        <div className="mb-8">
+          <SearchStocks 
+            onSelect={(stock) => setTrade({
+              open: true,
+              symbol: stock.symbol,
+              name: stock.name,
+              price: stock.price,
+              type: "BUY"
+            })}
+          />
+        </div>
+        
+        <h2 className="text-2xl font-bold mb-4">Trending as of Today</h2>
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full">

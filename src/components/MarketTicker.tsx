@@ -4,7 +4,7 @@ const mapIndex = [
   { name: "NIFTY 50", symbol: "^NSEI" },
   { name: "SENSEX", symbol: "^BSESN" },
   { name: "NIFTY BANK", symbol: "^NSEBANK" },
-  { name: "NIFTY FIN", symbol: "^CNXFINANCE" },
+  { name: "NIFTY FIN", symbol: "NIFTYFIN.NS" }, // Changed from ^CNXFINANCE
 ];
 
 async function fetchIndex(symbol: string) {

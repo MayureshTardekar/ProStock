@@ -1,26 +1,26 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
 import { useNotifications } from "@/contexts/NotificationContext";
 import {
-  Bell,
-  CheckCheck,
-  LogOut,
-  Moon,
-  Sun,
-  Trash2,
-  TrendingUp,
-  User,
+    Bell,
+    CheckCheck,
+    LogOut,
+    Moon,
+    Sun,
+    Trash2,
+    TrendingUp,
+    User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -246,8 +246,36 @@ const Navbar = () => {
                 </Button>
               </>
             ) : (
-              /* Other Pages: Show notifications, theme, and profile */
+              /* Other Pages: Show market status, notifications, theme, and profile */
               <>
+                {/* Market Status Badge */}
+                {(() => {
+                  const now = new Date();
+                  const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+                  const istTime = new Date(now.getTime() + istOffset);
+                  const day = istTime.getUTCDay(); // 0=Sunday, 6=Saturday
+                  const hours = istTime.getUTCHours();
+                  const minutes = istTime.getUTCMinutes();
+                  const totalMinutes = hours * 60 + minutes;
+                  
+                  // NSE hours: 9:15 AM (555 min) to 3:30 PM (930 min), Mon-Fri
+                  const marketStart = 9 * 60 + 15; // 9:15 AM = 555 minutes
+                  const marketEnd = 15 * 60 + 30;   // 3:30 PM = 930 minutes
+                  const isWeekday = day >= 1 && day <= 5; // Monday to Friday
+                  const isMarketHours = totalMinutes >= marketStart && totalMinutes < marketEnd;
+                  const isMarketOpen = isWeekday && isMarketHours;
+                  
+                  return (
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      isMarketOpen 
+                        ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
+                        : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                    }`}>
+                      {isMarketOpen ? '● OPEN' : '● CLOSED'}
+                    </div>
+                  );
+                })()}
+
                 {/* Notifications */}
                 <Popover>
                   <PopoverTrigger asChild>

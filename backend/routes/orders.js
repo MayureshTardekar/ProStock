@@ -58,13 +58,13 @@ router.post('/', authenticateToken, async (req, res) => {
         const newAvgPrice = totalValue / totalQty;
 
         await connection.query(
-          'UPDATE portfolio SET quantity = ?, avg_price = ?, current_price = ?, invested_amount = ? WHERE id = ?',
-          [totalQty, newAvgPrice, price, totalValue, holding.id]
+          'UPDATE portfolio SET quantity = ?, avg_price = ?, current_price = ? WHERE id = ?',
+          [totalQty, newAvgPrice, price, holding.id]
         );
       } else {
         await connection.query(
-          'INSERT INTO portfolio (user_id, symbol, name, exchange, quantity, avg_price, current_price, invested_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-          [userId, symbol, name, exchange || 'NSE', quantity, price, price, total]
+          'INSERT INTO portfolio (user_id, symbol, name, exchange, quantity, avg_price, current_price) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [userId, symbol, name, exchange || 'NSE', quantity, price, price]
         );
       }
     } else {
@@ -105,9 +105,10 @@ router.post('/', authenticateToken, async (req, res) => {
     );
 
     // Insert transaction record
+    const balanceBefore = parseFloat(users[0].balance);
     await connection.query(
-      'INSERT INTO transactions (user_id, tx_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)',
-      [userId, type, total, newBalance, `${type} ${quantity} shares of ${symbol}`]
+      'INSERT INTO transactions (user_id, tx_type, amount, balance_before, balance_after, description) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, type, total, balanceBefore, newBalance, `${type} ${quantity} shares of ${symbol}`]
     );
 
     // Create notification
