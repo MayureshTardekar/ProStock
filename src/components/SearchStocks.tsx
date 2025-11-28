@@ -1,7 +1,31 @@
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, TrendingUp } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+
+// Logo domain mapping for top 20 stocks
+const LOGO_DOMAINS: Record<string, string> = {
+  'RELIANCE': 'ril.com',
+  'TCS': 'tcs.com',
+  'HDFCBANK': 'hdfcbank.com',
+  'INFY': 'infosys.com',
+  'ICICIBANK': 'icicibank.com',
+  'HINDUNILVR': 'hul.co.in',
+  'ITC': 'itcportal.com',
+  'SBIN': 'sbi.co.in',
+  'BHARTIARTL': 'airtel.in',
+  'KOTAKBANK': 'kotak.com',
+  'LT': 'larsentoubro.com',
+  'BAJFINANCE': 'bajajfinserv.in',
+  'HCLTECH': 'hcltech.com',
+  'WIPRO': 'wipro.com',
+  'MARUTI': 'marutisuzuki.com',
+  'SUNPHARMA': 'sunpharma.com',
+  'AXISBANK': 'axisbank.com',
+  'TITAN': 'titan.co.in',
+  'ASIANPAINT': 'asianpaints.com',
+  'NESTLEIND': 'nestle.in',
+};
 
 // Popular Indian NSE stocks
 const POPULAR_STOCKS = [
@@ -42,8 +66,14 @@ export function SearchStocks({ onSelect }: SearchStocksProps) {
     return POPULAR_STOCKS.filter(stock => 
       stock.symbol.toLowerCase().includes(q) ||
       stock.name.toLowerCase().includes(q)
-    ).slice(0, 10); // Show max 10 results
+    ).slice(0, 10);
   }, [query]);
+
+  const getLogoUrl = (symbol: string) => {
+    const cleanSymbol = symbol.replace('.NS', '');
+    const domain = LOGO_DOMAINS[cleanSymbol];
+    return domain ? `https://logo.clearbit.com/${domain}` : '';
+  };
 
   return (
     <div className="relative w-full">
@@ -62,47 +92,76 @@ export function SearchStocks({ onSelect }: SearchStocksProps) {
         />
       </div>
 
-      {/* Search Results Dropdown */}
       {showResults && results.length > 0 && (
         <Card className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
           <div className="p-2">
             <p className="text-xs text-muted-foreground px-3 py-2">
               {results.length} result{results.length !== 1 ? 's' : ''} found
             </p>
-            {results.map((stock) => (
-              <button
-                key={stock.symbol}
-                className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition-colors text-left"
-                onClick={() => {
-                  onSelect(stock);
-                  setQuery('');
-                  setShowResults(false);
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-primary" />
+            {results.map((stock) => {
+              const cleanSymbol = stock.symbol.replace('.NS', '');
+              const firstLetter = cleanSymbol.charAt(0);
+              
+              // Company-specific colors
+              const colorMap: Record<string, string> = {
+                'RELIANCE': 'bg-orange-500',
+                'TCS': 'bg-blue-600',
+                'HDFCBANK': 'bg-red-600',
+                'INFY': 'bg-green-600',
+                'ICICIBANK': 'bg-orange-600',
+                'HINDUNILVR': 'bg-blue-500',
+                'ITC': 'bg-yellow-600',
+                'SBIN': 'bg-blue-700',
+                'BHARTIARTL': 'bg-red-500',
+                'KOTAKBANK': 'bg-red-700',
+                'LT': 'bg-indigo-600',
+                'BAJFINANCE': 'bg-purple-600',
+                'HCLTECH': 'bg-blue-600',
+                'WIPRO': 'bg-orange-500',
+                'MARUTI': 'bg-red-600',
+                'SUNPHARMA': 'bg-cyan-600',
+                'AXISBANK': 'bg-purple-700',
+                'TITAN': 'bg-yellow-700',
+                'ASIANPAINT': 'bg-red-500',
+                'NESTLEIND': 'bg-blue-500',
+              };
+              
+              const bgColor = colorMap[cleanSymbol] || 'bg-primary';
+              
+              return (
+                <button
+                  key={stock.symbol}
+                  className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition-colors text-left"
+                  onClick={() => {
+                    onSelect(stock);
+                    setQuery('');
+                    setShowResults(false);
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
+                      {firstLetter}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{cleanSymbol}</p>
+                      <p className="text-xs text-muted-foreground truncate max-w-xs">
+                        {stock.name}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-sm">{stock.symbol.replace('.NS', '')}</p>
-                    <p className="text-xs text-muted-foreground truncate max-w-xs">
-                      {stock.name}
+                  <div className="text-right">
+                    <p className="font-semibold text-sm">
+                      ₹{stock.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                     </p>
+                    <p className="text-xs text-muted-foreground">NSE</p>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-sm">
-                    ₹{stock.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-                  </p>
-                  <p className="text-xs text-muted-foreground">NSE</p>
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </Card>
       )}
 
-      {/* No Results Message */}
       {showResults && query.trim() && results.length === 0 && (
         <Card className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 p-6 text-center">
           <p className="text-sm text-muted-foreground">
