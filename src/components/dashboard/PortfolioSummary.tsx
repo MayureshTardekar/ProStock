@@ -1,8 +1,9 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTrading } from "@/contexts/TradingContext";
+import { formatCurrency } from "@/utils/format";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useTrading } from "@/contexts/TradingContext";
 
 export const PortfolioSummary = () => {
   const [showValues, setShowValues] = useState(true);
@@ -14,10 +15,10 @@ export const PortfolioSummary = () => {
   const todayProfit = 0; // Can be calculated based on day's opening prices
 
   const portfolioData = [
-    { label: "Investment", value: `₹${totalInvestment.toLocaleString('en-IN', { minimumFractionDigits: 2 })}` },
-    { label: "Current Value", value: `₹${currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}` },
-    { label: "Overall Profits", value: `₹${Math.abs(profitLoss).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, isProfit: profitLoss >= 0 },
-    { label: "Today's Profit", value: `₹${Math.abs(todayProfit).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, isProfit: todayProfit >= 0 },
+    { label: "Investment", value: formatCurrency(totalInvestment) },
+    { label: "Current Value", value: formatCurrency(currentValue) },
+    { label: "Overall Profits", value: formatCurrency(Math.abs(profitLoss)), isProfit: profitLoss >= 0 },
+    { label: "Today's Profit", value: formatCurrency(Math.abs(todayProfit)), isProfit: todayProfit >= 0 },
   ];
 
   return (

@@ -1,11 +1,13 @@
+import { ActiveAlerts } from "@/components/dashboard/ActiveAlerts";
 import { LiveStocks } from "@/components/dashboard/LiveStocks";
 import { PortfolioSummary } from "@/components/dashboard/PortfolioSummary";
 import { TradingOptionsGrid } from "@/components/dashboard/TradingOptionsGrid";
 import { WatchlistSidebar } from "@/components/dashboard/WatchlistSidebar";
+import MainLayout from "@/components/MainLayout";
 import MarketTicker from "@/components/MarketTicker";
 import { TradeModal } from "@/components/trading/TradeModal";
 import { Input } from "@/components/ui/input";
-import MainLayout from "@/components/MainLayout";
+import { formatCurrency } from "@/utils/format";
 import { Search, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -178,12 +180,9 @@ const Dashboard = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-sm">
-                          ₹
-                          {(
+                          {formatCurrency(
                             livePrices[stock.symbol] || stock.fallbackPrice
-                          ).toLocaleString("en-IN", {
-                            maximumFractionDigits: 2,
-                          })}
+                          )}
                         </p>
                         <p className="text-xs text-muted-foreground">NSE</p>
                       </div>
@@ -213,6 +212,9 @@ const Dashboard = () => {
 
           {/* Portfolio Summary */}
           <PortfolioSummary />
+
+          {/* Active Alerts */}
+          <ActiveAlerts />
 
           {/* Trading Options */}
           <TradingOptionsGrid />

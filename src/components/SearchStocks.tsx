@@ -3,30 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-// Logo domain mapping for top 20 stocks
-const LOGO_DOMAINS: Record<string, string> = {
-  'RELIANCE': 'ril.com',
-  'TCS': 'tcs.com',
-  'HDFCBANK': 'hdfcbank.com',
-  'INFY': 'infosys.com',
-  'ICICIBANK': 'icicibank.com',
-  'HINDUNILVR': 'hul.co.in',
-  'ITC': 'itcportal.com',
-  'SBIN': 'sbi.co.in',
-  'BHARTIARTL': 'airtel.in',
-  'KOTAKBANK': 'kotak.com',
-  'LT': 'larsentoubro.com',
-  'BAJFINANCE': 'bajajfinserv.in',
-  'HCLTECH': 'hcltech.com',
-  'WIPRO': 'wipro.com',
-  'MARUTI': 'marutisuzuki.com',
-  'SUNPHARMA': 'sunpharma.com',
-  'AXISBANK': 'axisbank.com',
-  'TITAN': 'titan.co.in',
-  'ASIANPAINT': 'asianpaints.com',
-  'NESTLEIND': 'nestle.in',
-};
-
 // Popular Indian NSE stocks
 const POPULAR_STOCKS = [
   { symbol: 'RELIANCE.NS', name: 'Reliance Industries', price: 1285.5 },
@@ -58,7 +34,6 @@ interface SearchStocksProps {
 export function SearchStocks({ onSelect }: SearchStocksProps) {
   const [query, setQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
-
   const results = useMemo(() => {
     if (!query.trim()) return [];
     
@@ -66,14 +41,8 @@ export function SearchStocks({ onSelect }: SearchStocksProps) {
     return POPULAR_STOCKS.filter(stock => 
       stock.symbol.toLowerCase().includes(q) ||
       stock.name.toLowerCase().includes(q)
-    ).slice(0, 10);
+    ).slice(0, 50);
   }, [query]);
-
-  const getLogoUrl = (symbol: string) => {
-    const cleanSymbol = symbol.replace('.NS', '');
-    const domain = LOGO_DOMAINS[cleanSymbol];
-    return domain ? `https://logo.clearbit.com/${domain}` : '';
-  };
 
   return (
     <div className="relative w-full">

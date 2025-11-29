@@ -1,14 +1,16 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +22,8 @@ const Login = () => {
     
     try {
       // Call backend login API
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -31,19 +34,33 @@ const Login = () => {
       if (response.ok) {
         // Clear any previous user's cached data
         localStorage.removeItem("userProfile");
-        localStorage.removeItem("prostock_trading_data");
+        // localStorage.removeItem("prostock_trading_data"); // Keep offline data until overwritten
         
         // Store auth token and user info
         localStorage.setItem("prostock_auth", "true");
         localStorage.setItem("prostock_token", data.token);
         localStorage.setItem("prostock_user", JSON.stringify(data.user));
+        
+        toast({
+          title: "Welcome back!",
+          description: "Login successful.",
+        });
+        
         navigate("/dashboard");
       } else {
-        alert(data.message || "Login failed. Please check your credentials.");
+        toast({
+          title: "Login Failed",
+          description: data.message || "Please check your credentials.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Failed to connect to server. Please ensure backend is running.");
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to server. Please ensure backend is running.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

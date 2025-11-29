@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, ShoppingCart, BadgeDollarSign } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { formatCurrency, formatNumber } from "@/utils/format";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 // Top 10 weighted stocks for each index (symbol + friendly name)
 const NIFTY50 = [
@@ -78,7 +79,18 @@ export const WatchlistSidebar = () => {
     setRows(prev=>({ ...prev, ...Object.fromEntries(entries) }));
   },[]);
 
-  useEffect(()=>{ load(NIFTY50); load(BANKNIFTY); load(FINNIFTY); const id=setInterval(()=>{ load(NIFTY50); load(BANKNIFTY); load(FINNIFTY); }, REFRESH_MS); return ()=>clearInterval(id); },[load]);
+  useEffect(() => {
+    const fetchActiveTab = () => {
+      const activeList = ALL[tab];
+      if (activeList) {
+        load(activeList);
+      }
+    };
+
+    fetchActiveTab(); // Initial load for the active tab
+    const id = setInterval(fetchActiveTab, REFRESH_MS);
+    return () => clearInterval(id);
+  }, [tab, load]);
 
   const triggerTrade = (type: 'BUY'|'SELL', baseSymbol: string, name: string, price: number)=>{
     const detail = { type, stock: { symbol: baseSymbol, name, price } };
@@ -102,11 +114,11 @@ export const WatchlistSidebar = () => {
                 </div>
                 <div className={`text-xs ${isUp?'text-green-500':'text-red-500'} flex items-center gap-1 mt-0.5`}>
                   {isUp? <TrendingUp className="w-3 h-3"/> : <TrendingDown className="w-3 h-3"/>}
-                  {isUp?'+':''}{r.change.toFixed(2)} ({isUp?'+':''}{r.percent.toFixed(2)}%)
+                  {isUp?'+':''}{formatNumber(r.change)} ({isUp?'+':''}{formatNumber(r.percent)}%)
                 </div>
               </div>
               <div className="text-right flex items-center gap-3">
-                <div className="text-sm font-bold min-w-[86px] text-right">₹{r.price.toLocaleString('en-IN',{maximumFractionDigits:2})}</div>
+                <div className="text-sm font-bold min-w-[86px] text-right">{formatCurrency(r.price)}</div>
                 <div className="flex gap-2">
                   <Button size="sm" className="h-7 px-3 bg-green-600 text-white hover:bg-green-700" onClick={()=>triggerTrade('BUY', base, it.name, r.price)}>
                     Buy

@@ -4,15 +4,16 @@ import { TradeModal } from "@/components/trading/TradeModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTrading } from "@/contexts/TradingContext";
+import { formatCurrency } from "@/utils/format";
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Eye,
-  EyeOff,
-  TrendingDown,
-  TrendingUp,
+    ArrowDownRight,
+    ArrowUpRight,
+    Eye,
+    EyeOff,
+    TrendingDown,
+    TrendingUp,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Live price fetcher
 async function fetchLivePrice(symbol: string) {
@@ -108,10 +109,7 @@ const Portfolio = () => {
 
   const maskValue = (value: number) => {
     return showValues
-      ? `₹${value.toLocaleString("en-IN", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`
+      ? formatCurrency(value)
       : "••,•••.••";
   };
 
@@ -278,16 +276,13 @@ const Portfolio = () => {
                             {holding.quantity}
                           </td>
                           <td className="py-4 text-right">
-                            ₹{holding.avgPrice.toFixed(2)}
+                            {formatCurrency(holding.avgPrice)}
                           </td>
                           <td className="py-4 text-right font-medium">
-                            ₹{livePrice.toFixed(2)}
+                            {formatCurrency(livePrice)}
                           </td>
                           <td className="py-4 text-right font-medium">
-                            ₹
-                            {current.toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                            })}
+                            {formatCurrency(current)}
                           </td>
                           <td
                             className={`py-4 text-right font-medium ${
@@ -300,7 +295,7 @@ const Portfolio = () => {
                               ) : (
                                 <ArrowDownRight className="w-4 h-4" />
                               )}
-                              <span>₹{Math.abs(pl).toFixed(2)}</span>
+                              <span>{formatCurrency(Math.abs(pl))}</span>
                             </div>
                             <span className="text-xs">
                               ({pl >= 0 ? "+" : ""}

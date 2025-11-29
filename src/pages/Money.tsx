@@ -6,36 +6,51 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTrading } from "@/contexts/TradingContext";
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
+    ArrowDownRight,
+    ArrowUpRight,
+    TrendingDown,
+    TrendingUp,
+    Wallet,
 } from "lucide-react";
 import { useState } from "react";
+
+import { useToast } from "@/hooks/use-toast";
+import { formatCurrency } from "@/utils/format";
 
 const Money = () => {
   const { balance, transactions, addMoney, withdrawMoney } = useTrading();
   const [amount, setAmount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<"deposit" | "withdraw">("deposit");
+  const { toast } = useToast();
 
   const handleSubmit = () => {
-    if (amount <= 0) return;
+    if (!amount || amount <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid positive amount",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (activeTab === "deposit") {
       const maxBalance = 5000000; // 50 lakhs max
       if (balance + amount > maxBalance) {
-        alert(
-          `Maximum balance limit is ₹50,00,000. You can add only ₹${(
-            maxBalance - balance
-          ).toLocaleString("en-IN")}`
-        );
+        toast({
+          title: "Limit Exceeded",
+          description: `Maximum balance limit is ₹50,00,000. You can add only ₹${(maxBalance - balance).toLocaleString("en-IN")}`,
+          variant: "destructive",
+        });
         return;
       }
       addMoney(amount);
     } else {
       if (amount > balance) {
-        alert("Insufficient balance");
+        toast({
+          title: "Insufficient Balance",
+          description: "You cannot withdraw more than your available balance",
+          variant: "destructive",
+        });
         return;
       }
       withdrawMoney(amount);
@@ -94,10 +109,7 @@ const Money = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-bold mb-6">
-                  ₹
-                  {balance.toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                  })}
+                  {formatCurrency(balance)}
                 </div>
 
                 {/* Add/Withdraw Money */}
@@ -229,16 +241,10 @@ const Money = () => {
                             {tx.type === "DEPOSIT" || tx.type === "SELL"
                               ? "+"
                               : "-"}
-                            ₹
-                            {tx.amount.toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                            })}
+                            {formatCurrency(tx.amount).replace('₹', '')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Balance: ₹
-                            {tx.balance.toLocaleString("en-IN", {
-                              minimumFractionDigits: 2,
-                            })}
+                            Balance: {formatCurrency(tx.balance)}
                           </p>
                         </div>
                       </div>

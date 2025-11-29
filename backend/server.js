@@ -7,6 +7,8 @@ const portfolioRoutes = require('./routes/portfolio');
 const ordersRoutes = require('./routes/orders');
 const moneyRoutes = require('./routes/money');
 const marketRoutes = require('./routes/market');
+const stopLossRoutes = require('./routes/stopLoss');
+const alertRoutes = require('./routes/alerts');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +34,8 @@ app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/money', moneyRoutes);
 app.use('/api/market', marketRoutes);
+app.use('/api/stop-loss', stopLossRoutes);
+app.use('/api/alerts', alertRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -56,11 +60,18 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+const { startStopLossMonitor } = require('./jobs/stopLossMonitor');
+const { startPriceAlertMonitor } = require('./jobs/priceAlertMonitor');
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 ProStock Backend running on http://localhost:${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  
+  // Start background jobs
+  startStopLossMonitor();
+  startPriceAlertMonitor();
 });
 
 module.exports = app;

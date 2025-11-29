@@ -1,14 +1,16 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -54,7 +56,11 @@ const Register = () => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -62,7 +68,8 @@ const Register = () => {
     
     try {
       // Call backend register API
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -77,19 +84,33 @@ const Register = () => {
       if (response.ok) {
         // Clear any previous user's cached data
         localStorage.removeItem("userProfile");
-        localStorage.removeItem("prostock_trading_data");
+        // localStorage.removeItem("prostock_trading_data"); // Keep offline data until overwritten
         
         // Store auth token and user info
         localStorage.setItem("prostock_auth", "true");
         localStorage.setItem("prostock_token", data.token);
         localStorage.setItem("prostock_user", JSON.stringify(data.user));
+        
+        toast({
+          title: "Account Created",
+          description: "Welcome to ProStock!",
+        });
+        
         navigate("/dashboard");
       } else {
-        alert(data.message || "Registration failed. Please try again.");
+        toast({
+          title: "Registration Failed",
+          description: data.message || "Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Registration error:", error);
-      alert("Failed to connect to server. Please ensure backend is running.");
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to server. Please ensure backend is running.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

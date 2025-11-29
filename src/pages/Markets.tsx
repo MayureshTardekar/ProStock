@@ -1,9 +1,11 @@
 import Footer from "@/components/Footer";
 import MainLayout from "@/components/MainLayout";
 import { SearchStocks } from "@/components/SearchStocks";
+import { AlertModal } from "@/components/trading/AlertModal";
 import { TradeModal } from "@/components/trading/TradeModal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { formatCurrency, formatNumber } from "@/utils/format";
 import { useEffect, useMemo, useState } from "react";
 
 interface Row {
@@ -110,6 +112,12 @@ export default function Markets() {
     price?: number;
     type?: "BUY" | "SELL";
   }>({ open: false });
+  const [alertModal, setAlertModal] = useState<{
+    open: boolean;
+    symbol?: string;
+    name?: string;
+    price?: number;
+  }>({ open: false });
 
   const load = useMemo(
     () => async () => {
@@ -188,10 +196,7 @@ export default function Markets() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-right">
-                        ₹
-                        {r.ltp.toLocaleString("en-IN", {
-                          maximumFractionDigits: 2,
-                        })}
+                        {formatCurrency(r.ltp)}
                       </td>
                       <td
                         className={`px-4 py-3 text-sm text-right ${
@@ -199,7 +204,7 @@ export default function Markets() {
                         }`}
                       >
                         {isUp ? "+" : ""}
-                        {(r.change ?? 0).toFixed(2)}
+                        {formatNumber(r.change ?? 0)}
                       </td>
                       <td
                         className={`px-4 py-3 text-sm text-right ${
@@ -207,10 +212,24 @@ export default function Markets() {
                         }`}
                       >
                         {isUp ? "+" : ""}
-                        {(r.changePercent ?? 0).toFixed(2)}%
+                        {formatNumber(r.changePercent ?? 0)}%
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              setAlertModal({
+                                open: true,
+                                symbol: r.symbol,
+                                name: r.name,
+                                price: r.ltp,
+                              })
+                            }
+                          >
+                            Alert
+                          </Button>
                           <Button
                             size="sm"
                             variant="outline"
@@ -249,14 +268,15 @@ export default function Markets() {
                   );
                 })}
                 {isLoading && (
-                  <tr>
-                    <td
-                      className="px-4 py-6 text-sm text-muted-foreground"
-                      colSpan={5}
-                    >
-                      Loading live data…
-                    </td>
-                  </tr>
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i}>
+                      <td className="px-4 py-4"><div className="h-4 bg-muted rounded w-32 animate-pulse"></div></td>
+                      <td className="px-4 py-4"><div className="h-4 bg-muted rounded w-20 ml-auto animate-pulse"></div></td>
+                      <td className="px-4 py-4"><div className="h-4 bg-muted rounded w-16 ml-auto animate-pulse"></div></td>
+                      <td className="px-4 py-4"><div className="h-4 bg-muted rounded w-16 ml-auto animate-pulse"></div></td>
+                      <td className="px-4 py-4"><div className="h-8 bg-muted rounded w-24 ml-auto animate-pulse"></div></td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -273,6 +293,16 @@ export default function Markets() {
             : null
         }
         type={(trade.type ?? "BUY") as "BUY" | "SELL"}
+      />
+      
+      <AlertModal
+        isOpen={alertModal.open}
+        onOpenChange={(open) => setAlertModal((prev) => ({ ...prev, open }))}
+        stock={
+          alertModal.symbol
+            ? { symbol: alertModal.symbol, name: alertModal.name!, price: alertModal.price! }
+            : { symbol: "", name: "", price: 0 }
+        }
       />
       <Footer />
     </MainLayout>

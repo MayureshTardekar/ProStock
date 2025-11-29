@@ -1,26 +1,27 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { isMarketOpen } from "@/utils/marketStatus";
 import {
-    Bell,
-    CheckCheck,
-    LogOut,
-    Moon,
-    Sun,
-    Trash2,
-    TrendingUp,
-    User,
+  Bell,
+  CheckCheck,
+  LogOut,
+  Moon,
+  Sun,
+  Trash2,
+  TrendingUp,
+  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -28,7 +29,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const theme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return theme === "dark" || (!theme && prefersDark);
+    }
+    return false;
+  });
+  
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string>("User");
   const {
@@ -40,14 +49,12 @@ const Navbar = () => {
   } = useNotifications();
 
   useEffect(() => {
-    const theme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    if (theme === "dark" || (!theme && prefersDark)) {
-      setIsDark(true);
+    if (isDark) {
       document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
+    
     // Load profile image/name
     const loadProfile = () => {
       try {
@@ -80,7 +87,7 @@ const Navbar = () => {
       window.removeEventListener("storage", onProfile);
       window.removeEventListener("prostock-profile-updated", onProfile);
     };
-  }, []);
+  }, [isDark]);
 
   const toggleTheme = () => {
     const newTheme = !isDark;
@@ -250,28 +257,15 @@ const Navbar = () => {
               <>
                 {/* Market Status Badge */}
                 {(() => {
-                  const now = new Date();
-                  const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
-                  const istTime = new Date(now.getTime() + istOffset);
-                  const day = istTime.getUTCDay(); // 0=Sunday, 6=Saturday
-                  const hours = istTime.getUTCHours();
-                  const minutes = istTime.getUTCMinutes();
-                  const totalMinutes = hours * 60 + minutes;
-                  
-                  // NSE hours: 9:15 AM (555 min) to 3:30 PM (930 min), Mon-Fri
-                  const marketStart = 9 * 60 + 15; // 9:15 AM = 555 minutes
-                  const marketEnd = 15 * 60 + 30;   // 3:30 PM = 930 minutes
-                  const isWeekday = day >= 1 && day <= 5; // Monday to Friday
-                  const isMarketHours = totalMinutes >= marketStart && totalMinutes < marketEnd;
-                  const isMarketOpen = isWeekday && isMarketHours;
+                  const open = isMarketOpen();
                   
                   return (
                     <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      isMarketOpen 
+                      open 
                         ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
                         : 'bg-red-500/10 text-red-500 border border-red-500/20'
                     }`}>
-                      {isMarketOpen ? '● OPEN' : '● CLOSED'}
+                      {open ? '● OPEN' : '● CLOSED'}
                     </div>
                   );
                 })()}

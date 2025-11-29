@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { formatCurrency, formatNumber } from "@/utils/format";
 import {
-  Clock,
-  RefreshCw,
-  ShoppingCart,
-  TrendingDown,
-  TrendingUp,
+    Clock,
+    RefreshCw,
+    ShoppingCart,
+    TrendingDown,
+    TrendingUp,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -463,11 +464,7 @@ export const LiveStocks = () => {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div className="text-2xl font-bold">
-                      ₹
-                      {stock.price.toLocaleString("en-IN", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
+                      {formatCurrency(stock.price)}
                     </div>
                     <div
                       className={`flex items-center gap-1 text-sm font-medium ${
@@ -481,11 +478,11 @@ export const LiveStocks = () => {
                       )}
                       <span>
                         {isPositive ? "+" : ""}
-                        {stock.change.toFixed(2)}
+                        {formatNumber(stock.change)}
                       </span>
                       <span>
                         ({isPositive ? "+" : ""}
-                        {stock.percent_change.toFixed(2)}%)
+                        {formatNumber(stock.percent_change)}%)
                       </span>
                     </div>
                   </CardContent>
