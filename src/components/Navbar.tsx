@@ -182,6 +182,17 @@ const Navbar = () => {
                   >
                     Money
                   </Link>
+                  <Link
+                    to="/analytics"
+                    className={`transition-colors font-medium flex items-center gap-1 ${
+                      location.pathname === "/analytics"
+                        ? "text-primary font-semibold"
+                        : "text-foreground/80 hover:text-primary"
+                    }`}
+                  >
+                    Analytics
+                    <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full border border-primary/20">Beta</span>
+                  </Link>
                 </>
               ) : (
                 <>

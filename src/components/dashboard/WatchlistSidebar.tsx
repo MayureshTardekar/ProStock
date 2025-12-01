@@ -52,45 +52,68 @@ const ALL: Record<string, { symbol: string; name: string }[]> = {
   fin: FINNIFTY,
 };
 
-const REFRESH_MS = 60_000;
+const REFRESH_MS = 120_000;
 
-async function fetchQuote(symbolNS: string) {
+async function fetchQuote(symbol: string) {
   const isDevHost = typeof window !== 'undefined' && /localhost|127\.|0\.0\.0\.0|::1/.test(window.location.hostname);
-  const proxied = `/yahoo/v8/finance/chart/${encodeURIComponent(symbolNS)}?range=1d&interval=1m&_=${Date.now()}`;
-  const absolute = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbolNS)}?range=1d&interval=1m&_=${Date.now()}`;
-  let res = await fetch(isDevHost ? proxied : absolute);
-  if (!res.ok) res = await fetch(absolute);
-  if (!res.ok) throw new Error(String(res.status));
-  const j = await res.json();
-  const r = j?.chart?.result?.[0];
-  const m = r?.meta || {};
-  const price = Number(m.regularMarketPrice ?? m.previousClose ?? 0);
-  const change = Number(m.regularMarketChange ?? (m.regularMarketPrice!=null && m.previousClose!=null ? m.regularMarketPrice - m.previousClose : 0));
-  const percent = Number(m.regularMarketChangePercent ?? (m.regularMarketPrice!=null && m.previousClose ? ((m.regularMarketPrice - m.previousClose)/m.previousClose)*100 : 0));
-  return { price, change, percent };
+  const base = isDevHost ? "/yahoo" : "https://query1.finance.yahoo.com";
+  const url = `${base}/v8/finance/chart/${symbol}?range=1d&interval=1m&_=${Date.now()}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(String(res.status));
+    
+    const json = await res.json();
+    const result = json?.chart?.result?.[0];
+    const meta = result?.meta;
+    const price = meta?.regularMarketPrice || meta?.chartPreviousClose || 0;
+    const previousClose = meta?.previousClose || 0;
+    const change = price - previousClose;
+    const percent = previousClose ? (change / previousClose) * 100 : 0;
+
+    return {
+      price,
+      change,
+      percent
+    };
+  } catch (e) {
+    console.error(`Fetch failed for ${symbol}`, e);
+    return null;
+  }
 }
 
 export const WatchlistSidebar = () => {
   const [tab, setTab] = useState<'nifty'|'bank'|'fin'>('nifty');
   const [rows, setRows] = useState<Record<string,{price:number,change:number,percent:number}>>({});
 
-  const load = useMemo(()=> async (symbols: {symbol:string}[])=>{
-    const entries = await Promise.all(symbols.map(async s=>{ try { const r = await fetchQuote(s.symbol); return [s.symbol,r] as const;} catch { return [s.symbol,{price:0,change:0,percent:0}] as const; }}));
-    setRows(prev=>({ ...prev, ...Object.fromEntries(entries) }));
-  },[]);
+  const loadAll = useMemo(() => async () => {
+    const allSymbols = Array.from(new Set([
+      ...NIFTY50.map(s => s.symbol),
+      ...BANKNIFTY.map(s => s.symbol),
+      ...FINNIFTY.map(s => s.symbol)
+    ]));
+    
+    // Fetch in parallel
+    const results = await Promise.all(allSymbols.map(async (sym) => {
+      const data = await fetchQuote(sym);
+      return { symbol: sym, data };
+    }));
+
+    const newRows: Record<string, { price: number; change: number; percent: number }> = {};
+    results.forEach(r => {
+      if (r.data) {
+        newRows[r.symbol] = r.data;
+      }
+    });
+
+    setRows(prev => ({ ...prev, ...newRows }));
+  }, []);
 
   useEffect(() => {
-    const fetchActiveTab = () => {
-      const activeList = ALL[tab];
-      if (activeList) {
-        load(activeList);
-      }
-    };
-
-    fetchActiveTab(); // Initial load for the active tab
-    const id = setInterval(fetchActiveTab, REFRESH_MS);
+    loadAll(); // Initial load for ALL stocks
+    const id = setInterval(loadAll, REFRESH_MS);
     return () => clearInterval(id);
-  }, [tab, load]);
+  }, [loadAll]);
 
   const triggerTrade = (type: 'BUY'|'SELL', baseSymbol: string, name: string, price: number)=>{
     const detail = { type, stock: { symbol: baseSymbol, name, price } };

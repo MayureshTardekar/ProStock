@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database/db');
+const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 
 // Get all active alerts for the user
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const [alerts] = await db.execute(
+    const [alerts] = await pool.query(
       'SELECT * FROM price_alerts WHERE user_id = ? ORDER BY created_at DESC',
-      [req.user.id]
+      [req.user.userId]
     );
     res.json(alerts);
   } catch (error) {
@@ -30,15 +30,15 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 
   try {
-    const [result] = await db.execute(
+    const [result] = await pool.query(
       `INSERT INTO price_alerts (user_id, symbol, name, target_price, condition_type, status)
        VALUES (?, ?, ?, ?, ?, 'ACTIVE')`,
-      [req.user.id, symbol, name, targetPrice, condition]
+      [req.user.userId, symbol, name, targetPrice, condition]
     );
 
     const newAlert = {
       id: result.insertId,
-      user_id: req.user.id,
+      user_id: req.user.userId,
       symbol,
       name,
       target_price: targetPrice,
@@ -58,16 +58,16 @@ router.post('/', authenticateToken, async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     // Verify ownership
-    const [alerts] = await db.execute(
+    const [alerts] = await pool.query(
       'SELECT * FROM price_alerts WHERE id = ? AND user_id = ?',
-      [req.params.id, req.user.id]
+      [req.params.id, req.user.userId]
     );
 
     if (alerts.length === 0) {
       return res.status(404).json({ message: 'Alert not found' });
     }
 
-    await db.execute(
+    await pool.query(
       'DELETE FROM price_alerts WHERE id = ?',
       [req.params.id]
     );

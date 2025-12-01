@@ -15,8 +15,18 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Strong password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        error: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)' 
+      });
     }
 
     // Check if user exists
@@ -42,8 +52,8 @@ router.post('/register', async (req, res) => {
 
     // Create welcome transaction
     await pool.query(
-      'INSERT INTO transactions (user_id, tx_type, amount, balance_before, balance_after, description) VALUES (?, ?, ?, ?, ?, ?)',
-      [userId, 'DEPOSIT', 500000.00, 0.00, 500000.00, 'Welcome to ProStock! Paper trading account credited.']
+      'INSERT INTO transactions (user_id, tx_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)',
+      [userId, 'DEPOSIT', 100000.00, 100000.00, 'Welcome to ProStock! Paper trading account credited.']
     );
 
     // Generate JWT
@@ -60,7 +70,12 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('[REGISTER ERROR]', error);
-    res.status(500).json({ error: 'Registration failed' });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      sql: error.sql
+    });
+    res.status(500).json({ error: 'Registration failed', details: error.message });
   }
 });
 

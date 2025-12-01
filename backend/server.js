@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const logger = require('./config/logger');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const portfolioRoutes = require('./routes/portfolio');
@@ -9,9 +11,27 @@ const moneyRoutes = require('./routes/money');
 const marketRoutes = require('./routes/market');
 const stopLossRoutes = require('./routes/stopLoss');
 const alertRoutes = require('./routes/alerts');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Rate limiting configuration
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window
+  message: 'Too many login attempts, please try again after 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  message: 'Too many requests, please try again later',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Middleware
 app.use(cors({
@@ -23,9 +43,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  logger.http(`${req.method} ${req.path}`, {
+    ip: req.ip,
+    userAgent: req.get('user-agent')
+  });
   next();
 });
+
+// Apply rate limiters
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api', generalLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -36,6 +64,7 @@ app.use('/api/money', moneyRoutes);
 app.use('/api/market', marketRoutes);
 app.use('/api/stop-loss', stopLossRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -65,13 +94,14 @@ const { startPriceAlertMonitor } = require('./jobs/priceAlertMonitor');
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 ProStock Backend running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  logger.info(`🚀 ProStock Backend running on http://localhost:${PORT}`);
+  logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
   
   // Start background jobs
   startStopLossMonitor();
   startPriceAlertMonitor();
+  logger.info('✅ Background monitoring jobs started');
 });
 
 module.exports = app;

@@ -1,11 +1,11 @@
-const db = require('../database/db');
+const pool = require('../config/database');
 const marketService = require('../services/marketService');
 
 async function checkPriceAlerts() {
   console.log('Running Price Alert Monitor...');
   try {
     // Fetch all ACTIVE alerts
-    const [alerts] = await db.execute(
+    const [alerts] = await pool.query(
       "SELECT * FROM price_alerts WHERE status = 'ACTIVE'"
     );
 
@@ -42,16 +42,16 @@ async function checkPriceAlerts() {
         console.log(`Alert Triggered: ${alert.symbol} is ${alert.condition_type} ${alert.target_price}`);
         
         // Update alert status to TRIGGERED
-        await db.execute(
+        await pool.query(
           "UPDATE price_alerts SET status = 'TRIGGERED' WHERE id = ?",
           [alert.id]
         );
 
         // Create notification
         const message = `Price Alert: ${alert.symbol} has reached your target of ₹${alert.target_price}`;
-        await db.execute(
+        await pool.query(
           'INSERT INTO notifications (user_id, type, message, is_read, created_at) VALUES (?, ?, ?, ?, NOW())',
-          [alert.user_id, 'ALERT', message, false]
+          [alert.user_id, 'SYSTEM', message, false]
         );
       }
     }

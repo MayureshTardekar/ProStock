@@ -165,7 +165,7 @@ const STOCKS = [
 ];
 
 const CACHE_KEY = "prostock_live_data";
-const REFRESH_INTERVAL = 60 * 1000; // auto-refresh every 60s
+const REFRESH_INTERVAL = 120 * 1000; // auto-refresh every 120s
 
 interface StockData {
   symbol: string;
@@ -275,6 +275,7 @@ export const LiveStocks = () => {
           }
         })
       );
+
 
       setStocks(results);
       setLastUpdated(new Date());
